@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-
 /**
  * Created by Naresh on 10/28/2016.
  */
@@ -70,6 +69,7 @@ public class Simulator {
         nonTargetLabels.add("B");
 
         DirectedGraph graph = generateGraph(wikiVoteDataReader, ((float) percent) / 100, filename);
+
         logger.info("***************** Simulating with" + percent + "% A graph ****************");
         printGraphStats(graph, targetLabels, nonTargetLabels);
 

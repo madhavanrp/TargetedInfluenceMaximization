@@ -93,11 +93,11 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
 
 
     private DirectedGraph createDAG(DirectedGraph graph) {
-        DirectedGraph clonedGraph = graph.copyVertices();
+        DirectedGraph clonedGraph = new DirectedGraph();
         for (Vertex v : graph.getVertices()) {
             for (Vertex vOut : v.getOutBoundNeighbours()) {
                 if (!(new Random().nextFloat() < (1 - v.getPropagationProbability(vOut)))) {
-                    clonedGraph.addEdge(v.getId(), vOut.getId(), v.getPropagationProbability(vOut));
+                    clonedGraph.addEdge(v, vOut, v.getPropagationProbability(vOut));
                 }
             }
         }

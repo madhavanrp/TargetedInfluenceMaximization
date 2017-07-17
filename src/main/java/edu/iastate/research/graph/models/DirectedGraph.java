@@ -56,18 +56,36 @@ public class DirectedGraph implements Serializable {
         return vertexMap.get(id);
     }
 
+    public void addEdge(Vertex from, Vertex to, float propogationProbability) {
+
+        Vertex fromVertex = find(from.getId());
+        if(fromVertex == null) {
+            fromVertex = createNewVertex(from.getId());
+            fromVertex.setProperties(from.getProperties());
+        }
+        Vertex toVertex = find(to.getId());
+        if(toVertex == null) {
+            toVertex = createNewVertex(to.getId());
+            toVertex.setProperties(to.getProperties());
+        }
+        addEdge(from.getId(), to.getId(), propogationProbability);
+    }
+
+    private Vertex createNewVertex(int id) {
+        Vertex newVertex = new Vertex(id);
+        this.vertices.add(newVertex);
+        vertexMap.put(id, newVertex);
+        return newVertex;
+    }
+
     public void addEdge(int from, int to, float propagationProbability) {
         Vertex fromVertex = find(from);
         Vertex toVertex = find(to);
         if (fromVertex == null) {
-            fromVertex = new Vertex(from);
-            this.vertices.add(fromVertex);
-            vertexMap.put(fromVertex.getId(), fromVertex);
+            fromVertex = createNewVertex(from);
         }
         if (toVertex == null) {
-            toVertex = new Vertex(to);
-            this.vertices.add(toVertex);
-            vertexMap.put(toVertex.getId(), toVertex);
+            toVertex = createNewVertex(to);
         }
         fromVertex.addOutBoundNeighbour(toVertex, propagationProbability);
         toVertex.addInBoundNeighbour(fromVertex);
