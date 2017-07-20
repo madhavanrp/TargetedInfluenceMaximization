@@ -38,4 +38,8 @@ public class IMTreeSeedSet {
         this.seeds = seeds;
     }
 
+    public String toString() {
+        return String.format(seeds + ", Targets Activated: %d, Non Targets activated: %d", targetsActivated, nonTargetsActivated);
+    }
+
 }

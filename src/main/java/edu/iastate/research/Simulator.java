@@ -90,21 +90,9 @@ public class Simulator {
         logger.info("***************** Simulating with" + percent + "% A graph ****************");
         printGraphStats(graph, targetLabels, nonTargetLabels);
 
-/*
-        Greedy greedy = new GreedyWithMultiThreading();
-        Set<Integer> seedSet = greedy.findSeedSet(graph,budget,targetLabels,10000);
-        logger.info("Influence spread : " + greedy.influenceSpread(graph,seedSet,targetLabels, 10000));
-
-
-        EstimateNonTargets edag = new EstimateNonTargetsUsingRandomDAG();
-        edag.estimate(graph, nonTargetLabels, 20000);
-*/
-
         IMWithTargetLabels im = IMTInstanceByStrategy.getInstance(IMTStrategy.byValue(strategy));
         List<IMTreeSeedSet> candidateSeedSets = im.findCandidateSeedSets(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 20000, nonTargetsEstimateFilename, experimentName);
         DisplaySeedSets.printOutput(candidateSeedSets);
-//        Set<Integer> seedSet = im.findSeedSet(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 10000, nonTargetsEstimateFilename, experimentName);
-        DisplaySeedSets.plotGraph(candidateSeedSets);
 
 
 
