@@ -24,7 +24,7 @@ public class IMTreeSeedSelector {
         for(IMTreeNode leaf:leafNodes) {
             IMTreeSeedSet imSeedSet = new IMTreeSeedSet();
             Set<Integer> seedSet = seedSetFromIMTree.findSeedSetInPath(leaf);
-            Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graph, seedSet, noOfSimulations, new HashSet<>());
+            Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graph, seedSet, 20000, new HashSet<>());
             int targetsActivated = countTargets(activatedSet, graph, targetLabels);
             int nonTargetsActivated = countTargets(activatedSet, graph, nonTargetLabels);
             imSeedSet.setTargetsActivated(targetsActivated);

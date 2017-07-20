@@ -15,11 +15,11 @@ import static edu.iastate.research.influence.maximization.algorithms.MaxTargetIn
 public class IMTRandomDAGEstimatorAndRandomDAG extends IMWithTargetLabelsWithPruning {
     @Override
     public Map<Integer, Integer> estimateNonTargetsByNode(DirectedGraph graph, Set<String> nonTargetLabels, int noOfSimulations) {
-        return new EstimateNonTargetsUsingRandomDAG().estimate(graph, nonTargetLabels, noOfSimulations);
+        return new EstimateNonTargetsUsingRandomDAG().estimate(graph, nonTargetLabels, 200);
     }
 
     @Override
     public List<NodeWithInfluence> findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
-        return getInstance(graph, targetLabels, noOfSimulations).find(graph, nodes, seedSet, targetLabels, noOfSimulations);
+        return getInstance(graph, targetLabels, 200).find(graph, nodes, seedSet, targetLabels, 200);
     }
 }

@@ -13,7 +13,7 @@ import java.util.Set;
 public class IMTRandomDAGEstimatorAndDegreeDiscount extends IMWithTargetLabelsWithPruning {
     @Override
     public Map<Integer, Integer> estimateNonTargetsByNode(DirectedGraph graph, Set<String> nonTargetLabels, int noOfSimulations) {
-        return new EstimateNonTargetsUsingRandomDAG().estimate(graph, nonTargetLabels, noOfSimulations);
+        return new EstimateNonTargetsUsingRandomDAG().estimate(graph, nonTargetLabels, 200);
     }
 
     @Override
