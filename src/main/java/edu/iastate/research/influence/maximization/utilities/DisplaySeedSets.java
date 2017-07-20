@@ -2,6 +2,7 @@ package edu.iastate.research.influence.maximization.utilities;
 
 import dnl.utils.text.table.TextTable;
 import edu.iastate.research.influence.maximization.models.IMTreeSeedSet;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ import java.util.List;
  * Created by madhavanrp on 6/10/17.
  */
 public class DisplaySeedSets {
+    final static Logger logger = Logger.getLogger(DisplaySeedSets.class);
 
     public static void printOutput(List<IMTreeSeedSet> seedSetList) {
         String[] columnNames = {
@@ -21,6 +23,7 @@ public class DisplaySeedSets {
             IMTreeSeedSet seedSet = seedSetList.get(i);
             Object[] row = new Object[]{seedSet.getSeeds(), seedSet.getTargetsActivated(), seedSet.getNonTargetsActivated()};
             data[i] = row;
+            logger.info(seedSet);
 
         };
 

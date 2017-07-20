@@ -11,6 +11,7 @@ import edu.iastate.research.influence.maximization.utilities.SeedSetFromIMTree;
 import org.apache.log4j.Logger;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Naresh on 1/17/2017.
@@ -66,11 +67,16 @@ public abstract class IMWithTargetLabels {
         Queue<IMTreeNode> firstQueue = new LinkedList<>();
         Queue<IMTreeNode> secondQueue = new LinkedList<>();
         firstQueue.add(root);
+        long phase1StartTime = System.nanoTime();
         if (nonTargetsEstimateFilename != "") {
             nonTargetsEstimateMap = estimateNonTargetsFromFile(nonTargetsEstimateFilename);
         } else {
             nonTargetsEstimateMap = estimateNonTargets(graph, nonTargetLabels, noOfSimulations);
         }
+        long phase1EndTime = System.nanoTime();
+        long phase1Time = phase1EndTime-phase1StartTime;
+        logger.info(String.format("Time taken for phase 1 is : " + TimeUnit.MILLISECONDS.convert(phase1Time, TimeUnit.NANOSECONDS)));
+        long phase2StartTime = System.nanoTime();
         init(graph, targetLabels, noOfSimulations);
         while (!((firstQueue.isEmpty() && secondQueue.isEmpty()) || depth >= budget)) {
 
@@ -91,6 +97,9 @@ public abstract class IMWithTargetLabels {
                 logger.info("End Process the tree for level :" + depth);
             }
         }
+        long phase2EndTime = System.nanoTime();
+        long phase2Time = phase2EndTime - phase2StartTime;
+        logger.info(String.format("Time taken for phase 2 is : " + TimeUnit.MILLISECONDS.convert(phase2Time, TimeUnit.NANOSECONDS)));
         logger.info("IMTTree is created");
         String treeFile = "tree-" + experimentName + new Random().nextInt() + ".data";
         WriteObject.writeToFile(maxInfluenceTree, treeFile);
