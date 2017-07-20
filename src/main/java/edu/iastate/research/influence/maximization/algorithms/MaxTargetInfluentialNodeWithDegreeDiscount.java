@@ -23,7 +23,6 @@ public class MaxTargetInfluentialNodeWithDegreeDiscount extends MaxTargetInfluen
         for (Integer node : nodes) {
             if (!seedSet.contains(node)) {
                 double influenceSpread = DegreeDiscount.degreeHeuresticForNodeWithLabels(graph, seedSet, node, targetLabels);
-                logger.debug("Degree Discount heuristic for node " + node + " is : " + influenceSpread);
                 Set<Integer> nodesWithSameSpread = new HashSet<>();
                 if (marginalInfluenceMap.containsKey(influenceSpread)) {
                     nodesWithSameSpread = marginalInfluenceMap.get(influenceSpread);
@@ -42,7 +41,7 @@ public class MaxTargetInfluentialNodeWithDegreeDiscount extends MaxTargetInfluen
             }
         }
        // logger.info("MaxMarginal Influence nodes size :" + marginalInfluenceMap.descendingMap().firstEntry().getValue().size());
-        logger.debug("Maximum influential Node is " + maxInfluentialNode + " and influence is " + maxInfluenceSpread);
+        //logger.debug("Maximum influential Node is " + maxInfluentialNode + " and influence is " + maxInfluenceSpread);
         return nodesWithMaxInfluence;
     }
 }

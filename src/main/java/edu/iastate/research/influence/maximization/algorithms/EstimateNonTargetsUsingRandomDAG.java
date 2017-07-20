@@ -22,7 +22,6 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
         Map<Integer, Integer> aggregatedNonTargetsMap = new HashMap<>();
         for (int i = 0; i < noOfSimulations; i++) {
             DirectedGraph dag = createDAG(graph);
-            logger.info("Created DAG : " + i);
 
             findNonTargetsInDAG(dag, nonTargetLabels, aggregatedNonTargetsMap);
         }

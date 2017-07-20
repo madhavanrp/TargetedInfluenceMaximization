@@ -83,18 +83,18 @@ public abstract class IMWithTargetLabels {
             if (!firstQueue.isEmpty()) {
                 depth++;
             }
-            logger.info("Start Process the tree for level :" + depth);
+            //logger.info("Start Process the tree for level :" + depth);
             processTreeLevel(graph, nonTargetThreshold, targetLabels, nonTargetLabels, secondQueue, firstQueue, nonTargetsEstimateMap, noOfSimulations);
-            logger.info("End Process the tree for level :" + depth);
+            //logger.info("End Process the tree for level :" + depth);
             if (depth >= budget) {
                 break;
             } else {
                 if (!secondQueue.isEmpty()) {
                     depth++;
                 }
-                logger.info("Start Process the tree for level :" + depth);
+                //logger.info("Start Process the tree for level :" + depth);
                 processTreeLevel(graph, nonTargetThreshold, targetLabels, nonTargetLabels, firstQueue, secondQueue, nonTargetsEstimateMap, noOfSimulations);
-                logger.info("End Process the tree for level :" + depth);
+                //logger.info("End Process the tree for level :" + depth);
             }
         }
         long phase2EndTime = System.nanoTime();
