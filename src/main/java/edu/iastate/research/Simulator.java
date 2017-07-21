@@ -56,7 +56,10 @@ public class Simulator {
         int percent = Integer.valueOf(args[2]);
         int budget = Integer.valueOf(args[3]);
         int nonTargetThreshold = Integer.valueOf(args[4]);
-        String nonTargetsEstimateFilename = "";
+        String nonTargetsEstimateFilename = args[5];
+        if(nonTargetsEstimateFilename==null || nonTargetsEstimateFilename.length()==0) {
+            nonTargetsEstimateFilename = "";
+        }
         int strategy = Integer.valueOf(args[6]);
         setupLogger(filename + "_" + probability + "_" + percent + "_" + budget + "_" + nonTargetThreshold + "_" + "_" + strategy + "_" + System.currentTimeMillis() + ".log");
         wikiGraphDifferentComobination(filename, probability, percent, budget, nonTargetThreshold, nonTargetsEstimateFilename, strategy);
