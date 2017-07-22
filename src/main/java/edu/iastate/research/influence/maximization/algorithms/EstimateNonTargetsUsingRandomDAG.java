@@ -60,33 +60,34 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
     }
 
     private void findNonTargetsInDAG(DirectedGraph dag, Set<String> nonTargetLabels, Map<Integer, Integer> aggregatedNonTargetsMap) {
-        Map<Integer, Set<Integer>> reachableCache = new HashMap<>();
+        Map<Integer, Integer> reachableCache = new HashMap<>();
         for (Vertex v : dag.getVertices()) {
-            Set<Integer> reachableSet = new HashSet<>();
-            Queue<Vertex> bfsQueue = new LinkedList<>();
-            bfsQueue.add(v);
-            reachableSet.add(v.getId());
+            Queue<Integer> bfsQueue = new LinkedList<>();
+            Set<Integer> visited = new HashSet<>();
+            bfsQueue.add(v.getId());
+            int reachable = 0;
             while (!bfsQueue.isEmpty()) {
-                Vertex node = bfsQueue.remove();
-                if (reachableCache.containsKey(node.getId())) {
-                    reachableSet.addAll(reachableCache.get(node.getId()));
+                int node = bfsQueue.remove();
+                if(visited.contains(node)) continue;
+                visited.add(node);
+                boolean nonTarget = false;
+                if(dag.find(node).hasLabel(nonTargetLabels)) nonTarget = true;
+                if (reachableCache.containsKey(node)) {
+                    reachable+= reachableCache.get(node);
                 } else {
-                    for (VertexWithFlag vertexWithFlag : node.getOutBoundNeighbours()) {
+                    if(nonTarget) reachable++;
+                    for (VertexWithFlag vertexWithFlag : dag.find(node).getOutBoundNeighbours()) {
                         if(!vertexWithFlag.isActive()) continue;
                         Vertex vOut = vertexWithFlag.getVertex();
-                        if (!reachableSet.contains(vOut.getId())) {
-                            bfsQueue.add(vOut);
-                            reachableSet.add(vOut.getId());
-                        }
+                        bfsQueue.add(vOut.getId());
                     }
                 }
             }
-            reachableCache.put(v.getId(), reachableSet);
             int prevNonTargetCount = 0;
             if (aggregatedNonTargetsMap.containsKey(v.getId())) {
                 prevNonTargetCount = aggregatedNonTargetsMap.get(v.getId());
             }
-            aggregatedNonTargetsMap.put(v.getId(), prevNonTargetCount + countNonTargets(reachableSet, dag, nonTargetLabels));
+            aggregatedNonTargetsMap.put(v.getId(), prevNonTargetCount + reachable);
         }
     }
 
