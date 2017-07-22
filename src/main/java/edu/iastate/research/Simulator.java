@@ -42,7 +42,7 @@ public class Simulator {
             System.out.println("Enter non target threshold");
             int nonTargetThreshold = sc.nextInt();
             System.out.println("Enter the NonTargetsEstimate filename");
-            String nonTargetsEstimateFilename = sc.next();
+            String nonTargetsEstimateFilename = "";
             System.out.println("Enter the Influence Maximization Strategy (1-6)");
             int strategy = sc.nextInt();
             setupLogger(filename + "_" + probability + "_" + percent + "_" + budget + "_" + nonTargetThreshold + "_" + "_" + strategy + "_" + System.currentTimeMillis() + ".log");

@@ -1,10 +1,7 @@
 package edu.iastate.research.graph.models;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Naresh on 2/23/2016.
@@ -105,5 +102,14 @@ public class DirectedGraph implements Serializable {
     public void removeEdge(Vertex from, Vertex to) {
         from.removeOutBoundNeighbour(to);
         to.removeInBoundNeighbour(from);
+    }
+
+    public void randomizeDag() {
+        for (Vertex v : this.getVertices()) {
+            for (Vertex vOut : v.getOutBoundNeighbours()) {
+                boolean active = !(new Random().nextFloat() < (1 - v.getPropagationProbability(vOut)));
+                v.setEdgeStatus(vOut.getId(), active);
+            }
+        }
     }
 }

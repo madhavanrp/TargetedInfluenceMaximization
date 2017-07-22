@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+
 /**
  * Created by Naresh on 2/23/2016.
  */
@@ -18,6 +19,7 @@ public class Vertex implements Serializable {
     private Set<Vertex> outBoundNeighbours;
     private Map<Integer, Float> propagationProbabilities;
     private Map<String, String> properties;
+    private Map<Integer, Boolean> activeOutboundEdges;
 
     public Map<String, String> getProperties() {
         return properties;
@@ -32,6 +34,7 @@ public class Vertex implements Serializable {
         this.propagationProbabilities = new HashMap<>();
         this.inBoundNeighbours = new HashSet<>();
         this.outBoundNeighbours = new HashSet<>();
+        this.activeOutboundEdges = new HashMap<>();
         this.indDegree = 0;
         this.outDegree = 0;
     }
@@ -156,6 +159,7 @@ public class Vertex implements Serializable {
     public void addOutBoundNeighbour(Vertex v, float propagationProbability) {
         this.outBoundNeighbours.add(v);
         this.propagationProbabilities.put(v.id, propagationProbability);
+        this.activeOutboundEdges.put(v.id, true);
         this.outDegree++;
     }
 
@@ -189,5 +193,13 @@ public class Vertex implements Serializable {
             }
         }
         return false;
+    }
+
+    public void setEdgeStatus(int vOut, boolean active) {
+        this.activeOutboundEdges.put(vOut, active);
+    }
+
+    public boolean getEdgeStatus(int vOut) {
+        return this.activeOutboundEdges.get(vOut);
     }
 }

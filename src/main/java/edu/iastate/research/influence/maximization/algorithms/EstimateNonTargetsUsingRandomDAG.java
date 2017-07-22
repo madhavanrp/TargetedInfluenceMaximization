@@ -2,14 +2,11 @@ package edu.iastate.research.influence.maximization.algorithms;
 
 import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.graph.models.Vertex;
-import edu.iastate.research.graph.utilities.MapUtil;
 import edu.iastate.research.graph.utilities.WriteObject;
 import org.apache.log4j.Logger;
 
 import java.util.*;
 
-import static edu.iastate.research.graph.utilities.MapUtil.shrinkMapBySize;
-import static edu.iastate.research.graph.utilities.MapUtil.sortByValue;
 
 /**
  * Created by Naresh on 1/16/2017.
@@ -21,9 +18,9 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
     public Map<Integer, Integer> estimate(DirectedGraph graph, Set<String> nonTargetLabels, int noOfSimulations) {
         Map<Integer, Integer> aggregatedNonTargetsMap = new HashMap<>();
         for (int i = 0; i < noOfSimulations; i++) {
-            DirectedGraph dag = createDAG(graph);
+            graph.randomizeDag();
 
-            findNonTargetsInDAG(dag, nonTargetLabels, aggregatedNonTargetsMap);
+            findNonTargetsInDAG(graph, nonTargetLabels, aggregatedNonTargetsMap);
         }
         Map<Integer, Integer> estimatedNonTargetMap = avgResults(aggregatedNonTargetsMap, noOfSimulations);
 
@@ -65,17 +62,18 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
         Map<Integer, Set<Integer>> reachableCache = new HashMap<>();
         for (Vertex v : dag.getVertices()) {
             Set<Integer> reachableSet = new HashSet<>();
-            Queue<Integer> bfsQueue = new LinkedList<>();
-            bfsQueue.add(v.getId());
+            Queue<Vertex> bfsQueue = new LinkedList<>();
+            bfsQueue.add(v);
             reachableSet.add(v.getId());
             while (!bfsQueue.isEmpty()) {
-                int node = bfsQueue.remove();
-                if (reachableCache.containsKey(node)) {
-                    reachableSet.addAll(reachableCache.get(node));
+                Vertex node = bfsQueue.remove();
+                if (reachableCache.containsKey(node.getId())) {
+                    reachableSet.addAll(reachableCache.get(node.getId()));
                 } else {
-                    for (Vertex vOut : dag.find(node).getOutBoundNeighbours()) {
+                    for (Vertex vOut : node.getOutBoundNeighbours()) {
+                        if(!node.getEdgeStatus(vOut.getId())) continue;
                         if (!reachableSet.contains(vOut.getId())) {
-                            bfsQueue.add(vOut.getId());
+                            bfsQueue.add(vOut);
                             reachableSet.add(vOut.getId());
                         }
                     }
@@ -91,15 +89,4 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
     }
 
 
-    private DirectedGraph createDAG(DirectedGraph graph) {
-        DirectedGraph clonedGraph = graph.copyVertices();
-        for (Vertex v : graph.getVertices()) {
-            for (Vertex vOut : v.getOutBoundNeighbours()) {
-                if (!(new Random().nextFloat() < (1 - v.getPropagationProbability(vOut)))) {
-                    clonedGraph.addEdge(v.getId(), vOut.getId(), v.getPropagationProbability(vOut));
-                }
-            }
-        }
-        return clonedGraph;
-    }
 }
