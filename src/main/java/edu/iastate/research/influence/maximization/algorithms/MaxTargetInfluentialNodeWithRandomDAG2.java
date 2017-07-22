@@ -2,6 +2,7 @@ package edu.iastate.research.influence.maximization.algorithms;
 
 import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.graph.models.Vertex;
+import edu.iastate.research.graph.models.VertexWithFlag;
 import edu.iastate.research.graph.utilities.WriteObject;
 import edu.iastate.research.influence.maximization.models.NodeWithInfluence;
 import org.apache.log4j.Logger;
@@ -75,7 +76,8 @@ public class MaxTargetInfluentialNodeWithRandomDAG2 extends MaxTargetInfluential
                 if (reachableCache.containsKey(node)) {
                     reachableSet.addAll(reachableCache.get(node));
                 } else {
-                    for (Vertex vOut : dag.find(node).getOutBoundNeighbours()) {
+                    for (VertexWithFlag vertexWithFlag : dag.find(node).getOutBoundNeighbours()) {
+                        Vertex vOut = vertexWithFlag.getVertex();
                         if (!reachableSet.contains(vOut.getId())) {
                             bfsQueue.add(vOut.getId());
                             reachableSet.add(vOut.getId());
@@ -199,7 +201,8 @@ public class MaxTargetInfluentialNodeWithRandomDAG2 extends MaxTargetInfluential
     private DirectedGraph createDAG(DirectedGraph graph) {
         DirectedGraph clonedGraph = graph.copyVertices();
         for (Vertex v : graph.getVertices()) {
-            for (Vertex vOut : v.getOutBoundNeighbours()) {
+            for (VertexWithFlag vertexWithFlag : v.getOutBoundNeighbours()) {
+                Vertex vOut = vertexWithFlag.getVertex();
                 if (!(new Random().nextFloat() < (1 - v.getPropagationProbability(vOut)))) {
                     clonedGraph.addEdge(v.getId(), vOut.getId(), v.getPropagationProbability(vOut));
                 }

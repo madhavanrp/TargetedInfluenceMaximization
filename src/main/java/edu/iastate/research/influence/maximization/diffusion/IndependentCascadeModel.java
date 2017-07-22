@@ -2,6 +2,7 @@ package edu.iastate.research.influence.maximization.diffusion;
 
 import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.graph.models.Vertex;
+import edu.iastate.research.graph.models.VertexWithFlag;
 import edu.iastate.research.graph.utilities.MapUtil;
 import edu.iastate.research.graph.utilities.UniqueStack;
 
@@ -46,7 +47,8 @@ public class IndependentCascadeModel {
                 Vertex node = graph.find(target.pop());
                 if (node != null) {
                     active.add(node.getId());
-                    for (Vertex follower : node.getOutBoundNeighbours()) {
+                    for (VertexWithFlag vertexWithFlag : node.getOutBoundNeighbours()) {
+                        Vertex follower = vertexWithFlag.getVertex();
                         float randnum = new Random().nextFloat();
                         if (randnum <= node.getPropagationProbability(follower)) {
                             if (!active.contains(follower.getId())) {

@@ -16,10 +16,9 @@ public class Vertex implements Serializable {
     private int indDegree;
     private int outDegree;
     private Set<Vertex> inBoundNeighbours;
-    private Set<Vertex> outBoundNeighbours;
+    private Set<VertexWithFlag> outBoundNeighbours;
     private Map<Integer, Float> propagationProbabilities;
     private Map<String, String> properties;
-    private Map<Integer, Boolean> activeOutboundEdges;
 
     public Map<String, String> getProperties() {
         return properties;
@@ -34,7 +33,6 @@ public class Vertex implements Serializable {
         this.propagationProbabilities = new HashMap<>();
         this.inBoundNeighbours = new HashSet<>();
         this.outBoundNeighbours = new HashSet<>();
-        this.activeOutboundEdges = new HashMap<>();
         this.indDegree = 0;
         this.outDegree = 0;
     }
@@ -116,7 +114,7 @@ public class Vertex implements Serializable {
      *
      * @return Value for property 'outBoundNeighbours'.
      */
-    public Set<Vertex> getOutBoundNeighbours() {
+    public Set<VertexWithFlag> getOutBoundNeighbours() {
         return outBoundNeighbours;
     }
 
@@ -125,7 +123,7 @@ public class Vertex implements Serializable {
      *
      * @param outBoundNeighbours Value to set for property 'outBoundNeighbours'.
      */
-    public void setOutBoundNeighbours(Set<Vertex> outBoundNeighbours) {
+    public void setOutBoundNeighbours(Set<VertexWithFlag> outBoundNeighbours) {
         this.outBoundNeighbours = outBoundNeighbours;
     }
 
@@ -156,10 +154,10 @@ public class Vertex implements Serializable {
         indDegree++;
     }
 
-    public void addOutBoundNeighbour(Vertex v, float propagationProbability) {
-        this.outBoundNeighbours.add(v);
+    public void addOutBoundNeighbour(VertexWithFlag vertexWithFlag, float propagationProbability) {
+        this.outBoundNeighbours.add(vertexWithFlag);
+        Vertex v = vertexWithFlag.getVertex();
         this.propagationProbabilities.put(v.id, propagationProbability);
-        this.activeOutboundEdges.put(v.id, true);
         this.outDegree++;
     }
 
@@ -195,11 +193,4 @@ public class Vertex implements Serializable {
         return false;
     }
 
-    public void setEdgeStatus(int vOut, boolean active) {
-        this.activeOutboundEdges.put(vOut, active);
-    }
-
-    public boolean getEdgeStatus(int vOut) {
-        return this.activeOutboundEdges.get(vOut);
-    }
 }

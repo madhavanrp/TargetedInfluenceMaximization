@@ -2,6 +2,7 @@ package edu.iastate.research.influence.maximization.algorithms;
 
 import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.graph.models.Vertex;
+import edu.iastate.research.graph.models.VertexWithFlag;
 import edu.iastate.research.graph.utilities.WriteObject;
 import org.apache.log4j.Logger;
 
@@ -70,8 +71,9 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
                 if (reachableCache.containsKey(node.getId())) {
                     reachableSet.addAll(reachableCache.get(node.getId()));
                 } else {
-                    for (Vertex vOut : node.getOutBoundNeighbours()) {
-                        if(!node.getEdgeStatus(vOut.getId())) continue;
+                    for (VertexWithFlag vertexWithFlag : node.getOutBoundNeighbours()) {
+                        if(!vertexWithFlag.isActive()) continue;
+                        Vertex vOut = vertexWithFlag.getVertex();
                         if (!reachableSet.contains(vOut.getId())) {
                             bfsQueue.add(vOut);
                             reachableSet.add(vOut.getId());

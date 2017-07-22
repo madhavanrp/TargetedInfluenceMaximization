@@ -66,7 +66,9 @@ public class DirectedGraph implements Serializable {
             this.vertices.add(toVertex);
             vertexMap.put(toVertex.getId(), toVertex);
         }
-        fromVertex.addOutBoundNeighbour(toVertex, propagationProbability);
+        VertexWithFlag toVertexWithFlag = new VertexWithFlag();
+        toVertexWithFlag.setVertex(toVertex);
+        fromVertex.addOutBoundNeighbour(toVertexWithFlag, propagationProbability);
         toVertex.addInBoundNeighbour(fromVertex);
         noOfEdges++;
     }
@@ -78,7 +80,8 @@ public class DirectedGraph implements Serializable {
         for (Vertex vertex : vertices) {
             vertexString.append(vertex.getId() + ",");
             edgeString.append("Edges for the vertex " + vertex.getId() + " are : ");
-            for (Vertex neighbour : vertex.getOutBoundNeighbours()) {
+            for (VertexWithFlag vertexWithFlag : vertex.getOutBoundNeighbours()) {
+                Vertex neighbour = vertexWithFlag.getVertex();
                 edgeString.append(neighbour.getId() + ",");
             }
             edgeString.deleteCharAt(edgeString.length() - 1);
@@ -106,9 +109,10 @@ public class DirectedGraph implements Serializable {
 
     public void randomizeDag() {
         for (Vertex v : this.getVertices()) {
-            for (Vertex vOut : v.getOutBoundNeighbours()) {
+            for (VertexWithFlag vertexWithFlag : v.getOutBoundNeighbours()) {
+                Vertex vOut = vertexWithFlag.getVertex();
                 boolean active = !(new Random().nextFloat() < (1 - v.getPropagationProbability(vOut)));
-                v.setEdgeStatus(vOut.getId(), active);
+                vertexWithFlag.setActive(active);
             }
         }
     }
