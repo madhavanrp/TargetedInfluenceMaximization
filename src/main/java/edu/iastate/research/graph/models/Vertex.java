@@ -1,10 +1,7 @@
 package edu.iastate.research.graph.models;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -15,9 +12,8 @@ public class Vertex implements Serializable {
     private int id;
     private int indDegree;
     private int outDegree;
-    private Set<Vertex> inBoundNeighbours;
-    private Set<VertexWithFlag> outBoundNeighbours;
-    private Map<Integer, Float> propagationProbabilities;
+    private List<Vertex> inBoundNeighbours;
+    private List<VertexWithFlag> outBoundNeighbours;
     private Map<String, String> properties;
 
     public Map<String, String> getProperties() {
@@ -30,9 +26,8 @@ public class Vertex implements Serializable {
 
     public Vertex(int id) {
         this.id = id;
-        this.propagationProbabilities = new HashMap<>();
-        this.inBoundNeighbours = new HashSet<>();
-        this.outBoundNeighbours = new HashSet<>();
+        this.inBoundNeighbours = new ArrayList<>();
+        this.outBoundNeighbours = new ArrayList<>();
         this.indDegree = 0;
         this.outDegree = 0;
     }
@@ -96,57 +91,39 @@ public class Vertex implements Serializable {
      *
      * @return Value for property 'inBoundNeighbours'.
      */
-    public Set<Vertex> getInBoundNeighbours() {
+    public Collection<Vertex> getInBoundNeighbours() {
         return inBoundNeighbours;
     }
 
-    /**
-     * Setter for property 'inBoundNeighbours'.
-     *
-     * @param inBoundNeighbours Value to set for property 'inBoundNeighbours'.
-     */
-    public void setInBoundNeighbours(Set<Vertex> inBoundNeighbours) {
-        this.inBoundNeighbours = inBoundNeighbours;
-    }
+
 
     /**
      * Getter for property 'outBoundNeighbours'.
      *
      * @return Value for property 'outBoundNeighbours'.
      */
-    public Set<VertexWithFlag> getOutBoundNeighbours() {
+    public Collection<VertexWithFlag> getOutBoundNeighbours() {
         return outBoundNeighbours;
     }
 
-    /**
-     * Setter for property 'outBoundNeighbours'.
-     *
-     * @param outBoundNeighbours Value to set for property 'outBoundNeighbours'.
-     */
-    public void setOutBoundNeighbours(Set<VertexWithFlag> outBoundNeighbours) {
-        this.outBoundNeighbours = outBoundNeighbours;
-    }
+
 
     /**
      * Getter for property 'propagationProbabilities'.
      *
      * @return Value for property 'propagationProbabilities'.
      */
-    public Map<Integer, Float> getPropagationProbabilities() {
-        return propagationProbabilities;
-    }
+
 
     /**
      * Setter for property 'propagationProbabilities'.
      *
      * @param propagationProbabilities Value to set for property 'propagationProbabilities'.
      */
-    public void setPropagationProbabilities(Map<Integer, Float> propagationProbabilities) {
-        this.propagationProbabilities = propagationProbabilities;
-    }
+
 
     public float getPropagationProbability(Vertex neighbour) {
-        return this.propagationProbabilities.get(neighbour.id);
+        return 0.05f;
     }
 
     public void addInBoundNeighbour(Vertex v) {
@@ -157,7 +134,6 @@ public class Vertex implements Serializable {
     public void addOutBoundNeighbour(VertexWithFlag vertexWithFlag, float propagationProbability) {
         this.outBoundNeighbours.add(vertexWithFlag);
         Vertex v = vertexWithFlag.getVertex();
-        this.propagationProbabilities.put(v.id, propagationProbability);
         this.outDegree++;
     }
 

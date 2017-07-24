@@ -69,7 +69,7 @@ public class DirectedGraph implements Serializable {
         VertexWithFlag toVertexWithFlag = new VertexWithFlag();
         toVertexWithFlag.setVertex(toVertex);
         fromVertex.addOutBoundNeighbour(toVertexWithFlag, propagationProbability);
-        toVertex.addInBoundNeighbour(fromVertex);
+//        toVertex.addInBoundNeighbour(fromVertex);
         noOfEdges++;
     }
 

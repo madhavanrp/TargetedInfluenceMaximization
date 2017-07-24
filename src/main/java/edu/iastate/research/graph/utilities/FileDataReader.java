@@ -26,12 +26,18 @@ public class FileDataReader implements DataReader {
             InputStream in = getClass().getClassLoader().getResourceAsStream("data/" + this.filename);
             bufferedReader = new BufferedReader(new InputStreamReader(in));
             String sCurrentLine;
+            int m = 0;
+            bufferedReader.readLine();
             while ((sCurrentLine = bufferedReader.readLine()) != null) {
                 String[] inputLine = sCurrentLine.split("\t", 2);
                 int nodeFrom = Integer.parseInt(inputLine[0]);
                 int nodeTo = Integer.parseInt(inputLine[1]);
                 if (nodeFrom != nodeTo) {
                     graph.addEdge(nodeFrom, nodeTo, this.probability);
+                }
+                m++;
+                if(m%100000==0) {
+                    System.out.println("Added edge: " + m);
                 }
             }
             bufferedReader.close();
