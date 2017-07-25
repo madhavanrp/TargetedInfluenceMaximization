@@ -15,7 +15,7 @@ public class DegreeDiscount {
     public static double degreeHeuresticForNodeWithLabels(DirectedGraph graph, Set<Integer> seeds, int node, Set<String> labels) {
         Vertex vertex = graph.find(node);
         Collection<Vertex> inboundNeighbours = vertex.getInBoundNeighbours();
-        Collection<VertexWithFlag> outboundNeighbours = vertex.getOutBoundNeighbours();
+        Collection<Vertex> outboundNeighbours = vertex.getOutBoundNeighbours();
         double probabilityNotInfluenced = 1.0;
         double influenceSpread = 1;
         for (Vertex inboundNeighbour : inboundNeighbours) {
@@ -23,8 +23,7 @@ public class DegreeDiscount {
                 probabilityNotInfluenced = probabilityNotInfluenced * (1- inboundNeighbour.getPropagationProbability(vertex));
             }
         }
-        for (VertexWithFlag vertexWithFlag : outboundNeighbours) {
-            Vertex outboundNeighbour = vertexWithFlag.getVertex();
+        for (Vertex outboundNeighbour : outboundNeighbours) {
             if (!seeds.contains(outboundNeighbour.getId()) && outboundNeighbour.hasLabel(labels)) {
                 influenceSpread = influenceSpread + vertex.getPropagationProbability(outboundNeighbour);
             }

@@ -62,8 +62,7 @@ public class MaxTargetInfluentialNodeWithRandomDAG3 extends MaxTargetInfluential
                 if (reachableCache.containsKey(node)) {
                     reachableSet.addAll(reachableCache.get(node));
                 } else {
-                    for (VertexWithFlag vertexWithFlag : dag.find(node).getOutBoundNeighbours()) {
-                        Vertex vOut = vertexWithFlag.getVertex();
+                    for (Vertex vOut : dag.find(node).getOutBoundNeighbours()) {
                         if (!reachableSet.contains(vOut.getId())) {
                             bfsQueue.add(vOut.getId());
                             reachableSet.add(vOut.getId());
@@ -184,8 +183,7 @@ public class MaxTargetInfluentialNodeWithRandomDAG3 extends MaxTargetInfluential
     private DirectedGraph createDAG(DirectedGraph graph) {
         DirectedGraph clonedGraph = graph.copyVertices();
         for (Vertex v : graph.getVertices()) {
-            for (VertexWithFlag vertexWithFlag : v.getOutBoundNeighbours()) {
-                Vertex vOut = vertexWithFlag.getVertex();
+            for (Vertex vOut : v.getOutBoundNeighbours()) {
                 if (!(new Random().nextFloat() < (1 - v.getPropagationProbability(vOut)))) {
                     clonedGraph.addEdge(v.getId(), vOut.getId(), v.getPropagationProbability(vOut));
                 }

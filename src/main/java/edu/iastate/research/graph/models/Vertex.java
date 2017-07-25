@@ -13,16 +13,8 @@ public class Vertex implements Serializable {
     private int indDegree;
     private int outDegree;
     private List<Vertex> inBoundNeighbours;
-    private List<VertexWithFlag> outBoundNeighbours;
-    private Map<String, String> properties;
-
-    public Map<String, String> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
-    }
+    private List<Vertex> outBoundNeighbours;
+    String label;
 
     public Vertex(int id) {
         this.id = id;
@@ -102,28 +94,16 @@ public class Vertex implements Serializable {
      *
      * @return Value for property 'outBoundNeighbours'.
      */
-    public Collection<VertexWithFlag> getOutBoundNeighbours() {
+    public Collection<Vertex> getOutBoundNeighbours() {
         return outBoundNeighbours;
     }
 
-
-
-    /**
-     * Getter for property 'propagationProbabilities'.
-     *
-     * @return Value for property 'propagationProbabilities'.
-     */
-
-
-    /**
-     * Setter for property 'propagationProbabilities'.
-     *
-     * @param propagationProbabilities Value to set for property 'propagationProbabilities'.
-     */
-
-
     public float getPropagationProbability(Vertex neighbour) {
         return 0.05f;
+    }
+
+    public int getDegree() {
+        return indDegree + outDegree;
     }
 
     public void addInBoundNeighbour(Vertex v) {
@@ -131,23 +111,16 @@ public class Vertex implements Serializable {
         indDegree++;
     }
 
-    public void addOutBoundNeighbour(VertexWithFlag vertexWithFlag, float propagationProbability) {
+    public void addOutBoundNeighbour(Vertex vertexWithFlag, float propagationProbability) {
         this.outBoundNeighbours.add(vertexWithFlag);
-        Vertex v = vertexWithFlag.getVertex();
         this.outDegree++;
     }
 
     public void setLabel(String label) {
-        if (this.getProperties() != null) {
-            this.properties.put("label", label);
-        } else {
-            this.properties = new HashMap<>();
-            this.properties.put("label", label);
-        }
+        this.label = label;
     }
-
     public String getLabel() {
-        return this.properties.get("label");
+        return label;
     }
 
     public void removeOutBoundNeighbour(Vertex toVertex) {
@@ -160,11 +133,10 @@ public class Vertex implements Serializable {
         indDegree--;
     }
 
-    public boolean hasLabel(Set<String> targetLabels) {
-        for (String targetLabel : targetLabels) {
-            if (this.getProperties().get("label").equals(targetLabel)) {
-                return true;
-            }
+    public boolean hasLabel(Set<String> labels) {
+        for (String l :
+                labels) {
+            if(l.compareToIgnoreCase(this.label)==0) return true;
         }
         return false;
     }

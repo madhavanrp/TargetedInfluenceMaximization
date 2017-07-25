@@ -31,7 +31,7 @@ public class ResultsFromTree {
         int targetLabelledVertices = 0;
         int nonTargetVertices = 0;
         for (Vertex vertex : graph.getVertices()) {
-            String label = vertex.getProperties().get("label");
+            String label = vertex.getLabel();
             if (targetLabels.contains(label)) {
                 targetLabelledVertices++;
             } else if (nonTargetLabels.contains(label)) {

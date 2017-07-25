@@ -47,8 +47,7 @@ public class IndependentCascadeModel {
                 Vertex node = graph.find(target.pop());
                 if (node != null) {
                     active.add(node.getId());
-                    for (VertexWithFlag vertexWithFlag : node.getOutBoundNeighbours()) {
-                        Vertex follower = vertexWithFlag.getVertex();
+                    for (Vertex follower : node.getOutBoundNeighbours()) {
                         float randnum = new Random().nextFloat();
                         if (randnum <= node.getPropagationProbability(follower)) {
                             if (!active.contains(follower.getId())) {

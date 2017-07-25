@@ -3,6 +3,8 @@ package edu.iastate.research.graph.models;
 import java.io.*;
 import java.util.*;
 
+import static org.apache.log4j.NDC.remove;
+
 /**
  * Created by Naresh on 2/23/2016.
  */
@@ -21,10 +23,17 @@ public class DirectedGraph implements Serializable {
 
     Set<Vertex> vertices;
     int noOfEdges;
+    private Vertex maxDegreeVertex;
+
+    public Vertex getMaxDegreeVertex() {
+        return maxDegreeVertex;
+    }
+
 
     public DirectedGraph() {
         vertices = new HashSet<>();
         this.noOfEdges = 0;
+
     }
 
     /**
@@ -66,11 +75,36 @@ public class DirectedGraph implements Serializable {
             this.vertices.add(toVertex);
             vertexMap.put(toVertex.getId(), toVertex);
         }
-        VertexWithFlag toVertexWithFlag = new VertexWithFlag();
-        toVertexWithFlag.setVertex(toVertex);
-        fromVertex.addOutBoundNeighbour(toVertexWithFlag, propagationProbability);
-//        toVertex.addInBoundNeighbour(fromVertex);
+        fromVertex.addOutBoundNeighbour(toVertex, propagationProbability);
+        toVertex.addInBoundNeighbour(fromVertex);
+        if(this.maxDegreeVertex == null) {
+            this.maxDegreeVertex = fromVertex;
+        }
+        if(fromVertex.getDegree()> this.maxDegreeVertex.getDegree()) {
+            this.maxDegreeVertex = fromVertex;
+        }
+        if(toVertex.getDegree()> this.maxDegreeVertex.getDegree()) {
+            this.maxDegreeVertex = toVertex;
+        }
         noOfEdges++;
+    }
+
+    public void addEdge(Vertex from, Vertex to, float propagationProbability) {
+        Vertex fromVertex = find(from.getId());
+        Vertex toVertex = find(to.getId());
+        if (fromVertex == null) {
+            fromVertex = new Vertex(from.getId());
+            fromVertex.setLabel(from.getLabel());
+            this.vertices.add(fromVertex);
+            vertexMap.put(fromVertex.getId(), fromVertex);
+        }
+        if (toVertex == null) {
+            toVertex = new Vertex(to.getId());
+            toVertex.setLabel(to.getLabel());
+            this.vertices.add(toVertex);
+            vertexMap.put(toVertex.getId(), toVertex);
+        }
+        addEdge(from.getId(), to.getId(), propagationProbability);
     }
 
     public void print() {
@@ -80,8 +114,7 @@ public class DirectedGraph implements Serializable {
         for (Vertex vertex : vertices) {
             vertexString.append(vertex.getId() + ",");
             edgeString.append("Edges for the vertex " + vertex.getId() + " are : ");
-            for (VertexWithFlag vertexWithFlag : vertex.getOutBoundNeighbours()) {
-                Vertex neighbour = vertexWithFlag.getVertex();
+            for (Vertex neighbour : vertex.getOutBoundNeighbours()) {
                 edgeString.append(neighbour.getId() + ",");
             }
             edgeString.deleteCharAt(edgeString.length() - 1);
@@ -96,7 +129,7 @@ public class DirectedGraph implements Serializable {
         DirectedGraph graph = new DirectedGraph();
         for (Vertex vertex : vertices) {
             Vertex clonedVertex =new Vertex(vertex.getId());
-            clonedVertex.setProperties(vertex.getProperties());
+            clonedVertex.setLabel(vertex.getLabel());
             graph.addVertex(clonedVertex);
         }
         return graph;
@@ -109,11 +142,100 @@ public class DirectedGraph implements Serializable {
 
     public void randomizeDag() {
         for (Vertex v : this.getVertices()) {
-            for (VertexWithFlag vertexWithFlag : v.getOutBoundNeighbours()) {
-                Vertex vOut = vertexWithFlag.getVertex();
+            for (Vertex vOut : v.getOutBoundNeighbours()) {
                 boolean active = !(new Random().nextFloat() < (1 - v.getPropagationProbability(vOut)));
-                vertexWithFlag.setActive(active);
             }
         }
+    }
+
+    public Set<Vertex> findAncestors(Vertex vertex) {
+        Set<Vertex> reachableVertices = new HashSet<>();
+        Queue<Vertex> queue = new LinkedList();
+        queue.add(vertex);
+        while (!queue.isEmpty()) {
+            Vertex u = queue.remove();
+            if(reachableVertices.contains(u)) continue;
+            reachableVertices.add(u);
+            if(u.getInBoundNeighbours()==null) {
+                System.out.println(" Yo null ");
+            }
+            for (Vertex v:
+                    u.getInBoundNeighbours()) {
+                queue.add(v);
+            }
+        }
+        reachableVertices.remove(vertex);
+        return reachableVertices;
+    }
+
+    public Set<Vertex> findDescendants(Vertex vertex) {
+        Set<Vertex> reachableVertices = new HashSet<>();
+        Queue<Vertex> queue = new LinkedList();
+        queue.add(vertex);
+        while (!queue.isEmpty()) {
+            Vertex u = queue.remove();
+            if(reachableVertices.contains(u)) continue;
+            reachableVertices.add(u);
+            for (Vertex v:
+                 u.getOutBoundNeighbours()) {
+                queue.add(v);
+            }
+        }
+        return reachableVertices;
+    }
+
+
+    public void scc() {
+        Stack stack = new Stack();
+        Set<Vertex> visited = new HashSet<>();
+
+
+        for (Vertex vertex :
+                vertices) {
+            if(!visited.contains(vertex)) {
+                fillOrder(vertex, visited, stack);
+            }
+        }
+
+        visited = new HashSet<>();
+
+        while(!stack.isEmpty()) {
+            Vertex vertex = (Vertex)stack.pop();
+            if(!visited.contains(vertex)) {
+                DFSUtil(vertex, visited);
+//                System.out.println();
+                numberSCC++;
+            }
+        }
+    }
+    public int numberSCC = 0;
+    private void DFSUtil(Vertex vertex, Set<Vertex> visited) {
+        visited.add(vertex);
+//        System.out.print(vertex.getId() + " ");
+
+        Queue<Vertex> queue = new LinkedList<>(vertex.getInBoundNeighbours());
+        while(!queue.isEmpty()) {
+            Vertex v = queue.remove();
+            if(!visited.contains(v)) {
+                DFSUtil(v, visited);
+            }
+        }
+    }
+
+    private void fillOrder(Vertex vertex, Set<Vertex> visited, Stack stack) {
+        visited.add(vertex);
+        Queue<Vertex> queue = new LinkedList<>(vertex.getOutBoundNeighbours());
+        while(!queue.isEmpty()) {
+            Vertex v = queue.remove();
+            if(!visited.contains(v)) fillOrder(v, visited, stack);
+
+        }
+        stack.push(vertex);
+
+    }
+
+    public static void main(String[] args) {
+        DirectedGraph g = new DirectedGraph();
+        g.scc();
     }
 }
