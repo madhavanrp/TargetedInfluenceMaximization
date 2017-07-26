@@ -80,7 +80,7 @@ public class Simulator {
     }
 
     private static void wikiGraphDifferentComobination(String filename, float probability, int percent, int budget, int nonTargetThreshold, String nonTargetsEstimateFilename, int strategy) {
-
+        Vertex.setPropagationProbability(probability);
         String experimentName = filename.split(".txt")[0] + "_" + probability + "_" + percent + "%A_" + budget + "_" + nonTargetThreshold + "_" + nonTargetsEstimateFilename.split(".data")[0].replace('\\', '_') + "_" + strategy;
         FileDataReader wikiVoteDataReader = new FileDataReader(filename, probability);
 

@@ -16,6 +16,17 @@ public class Vertex implements Serializable {
     private List<Vertex> outBoundNeighbours;
     String label;
 
+    public static float getPropagationProbability() {
+        return propagationProbability;
+    }
+
+    public static void setPropagationProbability(float propagationProability) {
+        Vertex.propagationProbability = propagationProability;
+    }
+
+    //#TODO: This shouldn't be static and must be per edge
+    private static float propagationProbability;
+
     public Vertex(int id) {
         this.id = id;
         this.inBoundNeighbours = new ArrayList<>();
@@ -99,7 +110,7 @@ public class Vertex implements Serializable {
     }
 
     public float getPropagationProbability(Vertex neighbour) {
-        return 0.05f;
+        return getPropagationProbability();
     }
 
     public int getDegree() {

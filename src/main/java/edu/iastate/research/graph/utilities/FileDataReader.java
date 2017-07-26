@@ -36,9 +36,9 @@ public class FileDataReader implements DataReader {
                     graph.addEdge(nodeFrom, nodeTo, this.probability);
                 }
                 m++;
-                if(m%10000000==0) {
-                    System.out.println("Added edge: " + m);
-                }
+//                if(m%10000000==0) {
+//                    System.out.println("Added edge: " + m);
+//                }
             }
             bufferedReader.close();
         } catch (FileNotFoundException e) {

@@ -184,6 +184,17 @@ public class DirectedGraph implements Serializable {
         return reachableVertices;
     }
 
+    public Set<Vertex> getVerticesWithLabel(String label) {
+        Set<Vertex> labelledVertices = new HashSet<>();
+        for (Vertex vertex:
+             this.getVertices()) {
+            if(vertex.getLabel().compareToIgnoreCase(label)==0) {
+                labelledVertices.add(vertex);
+            }
+        }
+        return labelledVertices;
+    }
+
 
     public void scc() {
         Stack stack = new Stack();

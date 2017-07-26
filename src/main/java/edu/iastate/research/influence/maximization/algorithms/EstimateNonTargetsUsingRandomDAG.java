@@ -29,17 +29,15 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
             break;
         }
         for (int i = 0; i < noOfSimulations; i++) {
-            System.out.println("Begin randomize");
             DirectedGraph dag = createDAG(graph);
-            System.out.println("Randomized dag: " + i);
+            if (i%50==0) {
+                logger.info("Created DAG: " + i);
+            }
 
 
 
-            long start = System.nanoTime();
             findNonTargetsInDAGWithPrunedBFS(dag, aggregatedNonTargetsMap);
 //            findNonTargetsInDAG(dag, nonTargetLabels, aggregatedNonTargetsMap);
-            long end = System.nanoTime();
-            System.out.println("Time taken for 1 DAG non targets estimation: " + TimeUnit.MILLISECONDS.convert(end-start, TimeUnit.NANOSECONDS));
         }
         Map<Integer, Integer> estimatedNonTargetMap = avgResults(aggregatedNonTargetsMap, noOfSimulations);
 
@@ -55,7 +53,7 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
         Vertex maxDegreeVertex = dag.getMaxDegreeVertex();
         Set<Vertex> ancestors = dag.findAncestors(maxDegreeVertex);
         Set<Vertex> descendants = dag.findDescendants(maxDegreeVertex);
-        HashMap<Vertex, Integer> nonTargetMap = new HashMap<>();
+        HashMap<Integer, Integer> nonTargetMap = new HashMap<>();
         int i = 0;
         for (Vertex v:
              dag.getVertices()) {
@@ -71,11 +69,13 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
                 if (aggregatedNonTargetsMap.containsKey(dagVertex.getId())) {
                     prevNonTargetCount = aggregatedNonTargetsMap.get(dagVertex.getId());
                 }
-                aggregatedNonTargetsMap.put(dagVertex.getId(), prevNonTargetCount + nonTargetMap.get(dagVertex));
+                aggregatedNonTargetsMap.put(dagVertex.getId(), prevNonTargetCount + nonTargetMap.get(dagVertex.getId()));
             } else {
                 int nonTargetCount = 0;
                 if(v.getLabel().compareToIgnoreCase(this.nonTargetLabel)==0) {
                     nonTargetCount = 1;
+                } else {
+                    continue;
                 }
                 int prevNonTargetCount = 0;
                 if (aggregatedNonTargetsMap.containsKey(v.getId())) {
@@ -86,14 +86,14 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
         }
     }
 
-    private int gain(Set<Vertex> ancestors, Set<Vertex> descendants, Vertex vertex, DirectedGraph dag, HashMap<Vertex, Integer> nonTargetMap) {
+    private int gain(Set<Vertex> ancestors, Set<Vertex> descendants, Vertex vertex, DirectedGraph dag, HashMap<Integer, Integer> nonTargetMap) {
         //Integer non
-        if(nonTargetMap.containsKey(vertex)) return nonTargetMap.get(vertex);
+        if(nonTargetMap.containsKey(vertex.getId())) return nonTargetMap.get(vertex.getId());
         int influence = 0;
         if(ancestors.contains(vertex)) {
             influence = gain(ancestors, descendants, dag.getMaxDegreeVertex(), dag, nonTargetMap);
         }
-        nonTargetMap.put(vertex, influence);
+        nonTargetMap.put(vertex.getId(), influence);
 
         Queue<Vertex> queue = new LinkedList<>();
         queue.add(vertex);
@@ -103,9 +103,9 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
             Vertex u = queue.remove();
             if(ancestors.contains(vertex) && descendants.contains(u)) continue;
             if(u.getLabel().compareToIgnoreCase(this.nonTargetLabel)==0) {
-                influence = nonTargetMap.get(vertex);
+                influence = nonTargetMap.get(vertex.getId());
                 influence++;
-                nonTargetMap.put(vertex, influence);
+                nonTargetMap.put(vertex.getId(), influence);
             }
 
             for (Vertex v :
@@ -116,7 +116,7 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
             }
 
         }
-        return nonTargetMap.get(vertex);
+        return nonTargetMap.get(vertex.getId());
     }
 
     private Map<Integer, Integer> avgResults(Map<Integer, Integer> aggregatedNonTargetsMap, int noOfSimulations) {
