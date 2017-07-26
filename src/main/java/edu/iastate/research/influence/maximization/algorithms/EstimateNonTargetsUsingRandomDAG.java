@@ -2,14 +2,11 @@ package edu.iastate.research.influence.maximization.algorithms;
 
 import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.graph.models.Vertex;
-import edu.iastate.research.graph.models.VertexWithFlag;
 import edu.iastate.research.graph.utilities.WriteObject;
 import org.apache.log4j.Logger;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
-import static sun.net.ftp.FtpReplyCode.find;
 
 
 /**
