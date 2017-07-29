@@ -44,7 +44,9 @@ public class IMTInstanceByStrategy {
                 instance = new IMTWithCELFGreedy();
                 logger.debug("Instantiating IMTStrategy : RANDOM_DAG_ESTIMATOR_AND_CELF_INFLUENTIAL");
                 break;
-
+            case RANDOM_DAG_ESTIMATOR_AND_TIM_INFLUENTIAL:
+                instance = new IMTRandomDagEstimatorAndTIMInfluential();
+                break;
         }
         return instance;
     }

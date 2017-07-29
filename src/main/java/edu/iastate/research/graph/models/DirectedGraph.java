@@ -1,5 +1,7 @@
 package edu.iastate.research.graph.models;
 
+import edu.iastate.research.graph.utilities.FileDataReader;
+
 import java.io.*;
 import java.util.*;
 
@@ -156,9 +158,6 @@ public class DirectedGraph implements Serializable {
             Vertex u = queue.remove();
             if(reachableVertices.contains(u)) continue;
             reachableVertices.add(u);
-            if(u.getInBoundNeighbours()==null) {
-                System.out.println(" Yo null ");
-            }
             for (Vertex v:
                     u.getInBoundNeighbours()) {
                 queue.add(v);
@@ -246,7 +245,31 @@ public class DirectedGraph implements Serializable {
     }
 
     public static void main(String[] args) {
-        DirectedGraph g = new DirectedGraph();
-        g.scc();
+        DirectedGraph g;
+        FileDataReader fileDataReader = new FileDataReader("graph_ic.inf", 0.01f);
+        g = fileDataReader.createGraphFromData();
+        System.out.println("Vertices " + g.getNumberOfVertices());
+        System.out.println("Edges " + g.getNoOfEdges());
+    }
+
+    public void writeGraphToFile(String fileName) {
+        try {
+            File fout = new File("out.txt");
+            FileOutputStream fos = new FileOutputStream(fout);
+
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+            for (Vertex u :
+                    this.getVertices()) {
+                for (Vertex v :
+                        u.getOutBoundNeighbours()) {
+                    bw.write(String.format("%d %d %f", u.getId(), v.getId(), u.getPropagationProbability(v)));
+                    bw.newLine();
+                }
+            }
+
+            bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
