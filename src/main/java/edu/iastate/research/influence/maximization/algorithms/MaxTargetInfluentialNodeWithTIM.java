@@ -16,6 +16,7 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
     RandomRRSetGenerator randomRRSetGenerator;
     String targetLabel = null;
     TIMRandomRRSetMap timRandomRRSetMap;
+    int[][] randomRRSetArray;
 
     public MaxTargetInfluentialNodeWithTIM() {
         this.timRandomRRSetMap = new TIMRandomRRSetMap();
@@ -54,10 +55,10 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
             double c = z * Math.pow(2, i);
             double sum = 0;
             for (int j = 1; j <=c ; j++) {
-                RandomRRSet randomRRSet = this.randomRRSetGenerator.generateRandomRRSetWithLabel(this.targetLabel);
-
+                int[][] randomRRSet = this.randomRRSetGenerator.generateRandomRRSetWithLabel(this.targetLabel);
+                int width = randomRRSet[2][0];
                 //Calculate K(R)
-                double a = 1 - Double.valueOf(randomRRSet.width)/Double.valueOf(m);
+                double a = 1 - Double.valueOf(width)/Double.valueOf(m);
                 double k_r = 1 - Math.pow(a, k);
                 sum+=k_r;
             }
@@ -81,30 +82,37 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
         System.out.println("R value is " + R);
         int maxSize = 0;
         int[][] randomRRSetArray = new int[(int)Math.ceil(R)][];
+        this.randomRRSetArray = randomRRSetArray;
         long startTime, endTime;
         long totalTime = 0;
+
+        long incrementStartTime, incrementEndTime;
+        long totalIncrementTime = 0;
         for (int i = 0; i < R; i++) {
             startTime = System.currentTimeMillis();
-            RandomRRSet randomRRSet = randomRRSetGenerator.generateRandomRRSet();
+            int[][] randomRRSet = randomRRSetGenerator.generateRandomRRSet();
             endTime = System.currentTimeMillis();
             totalTime = totalTime + endTime - startTime;
-            randomRRSet.setId(i);
-            for (Integer u :
-                    randomRRSet.randomRRSet) {
-                this.timRandomRRSetMap.incrementCountForVertex(u, randomRRSet);
+            incrementStartTime = System.currentTimeMillis();
+            for (int j = 0; j < randomRRSet[1].length; j++) {
+                int u = randomRRSet[1][j];
+                this.timRandomRRSetMap.incrementCountForVertex(u, i);
             }
-            randomRRSetArray[i] = new int[randomRRSet.randomRRSet.size()];
+            incrementEndTime = System.currentTimeMillis();
+            totalIncrementTime = totalIncrementTime + (incrementEndTime - incrementStartTime);
+            randomRRSetArray[i] =randomRRSet[1];
             int j = 0;
-            for (Integer setId :
-                    randomRRSet.randomRRSet) {
-                randomRRSetArray[i][j++] = setId;
-            }
-            if(randomRRSet.randomRRSet.size()>maxSize) maxSize = randomRRSet.randomRRSet.size();
+            if(randomRRSet[1].length>maxSize) maxSize = randomRRSet[1].length;
 
             if(i%1000000==0 && i>0) {
                 System.out.println("Generated RR Set" + i);
                 System.out.println("Max Size so far is " + maxSize);
-                System.out.println("Average time to initialise random RR set : " + (double)totalTime/(double) (i+1));
+                System.out.println("Average time to initialise random RR set : " + (double)totalTime/(double) 1000000);
+                System.out.println("Average time to increment vertex count is  : " + (double)totalIncrementTime/(double) 1000000);
+                System.out.println("Total time to initialise random RR set : " + totalTime);
+                System.out.println("Total time to increment vertex count is  : " + totalIncrementTime);
+                totalTime = 0;
+                totalIncrementTime = 0;
             }
         }
         System.out.println("RR Sets generated size: " + randomRRSetArray.length);
@@ -122,6 +130,7 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
     private Integer getMaximumVertex(TIMRandomRRSetMap timRandomRRSetMap) {
         int maxCount = Integer.MIN_VALUE;
         Integer maxVertex = null;
+        System.out.println("Starting to take max vertex");
         for (Integer v:
              timRandomRRSetMap.getVertices()) {
             int c = timRandomRRSetMap.countForVertex(v);
@@ -131,7 +140,9 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
             }
 
         }
-        timRandomRRSetMap.removeVertexEntry(maxVertex);
+        System.out.println("Starting to take max vertex");
+
+        timRandomRRSetMap.removeVertexEntry(maxVertex, this.randomRRSetArray);
         return maxVertex;
     }
 

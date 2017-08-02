@@ -15,11 +15,11 @@ public class RandomRRSetGenerator {
         this.vertices = new ArrayList<>(graph.getVertices());
     }
 
-    public RandomRRSet generateRandomRRSet() {
+    public int[][] generateRandomRRSet() {
          return generateRandomRRSetWithLabel(null);
     }
 
-    public RandomRRSet generateRandomRRSetWithLabel(String label) {
+    public int[][] generateRandomRRSetWithLabel(String label) {
         Vertex randomVertex = null;
         while(randomVertex==null) {
             int i = ThreadLocalRandom.current().nextInt(0, this.vertices.size());
@@ -45,7 +45,20 @@ public class RandomRRSetGenerator {
                 }
             }
         }
-        RandomRRSet randomRRset = new RandomRRSet(randomRRSet, width);
-        return randomRRset;
+        width = ThreadLocalRandom.current().nextInt(0,50);
+        //Using this structure instead of a class to attempt to use less memory
+        int[][] randomRRSet2DArray = new int[3][];
+        // Set the ID
+        randomRRSet2DArray[0] = new int[1];
+        randomRRSet2DArray[1] = new int[randomRRSet.size()];
+        int i = 0;
+        for (Integer setID :
+                randomRRSet) {
+            randomRRSet2DArray[1][i++] = setID;
+        }
+        randomRRSet2DArray[2] = new int[1];
+        randomRRSet2DArray[2][0] = width;
+
+        return randomRRSet2DArray;
     }
 }

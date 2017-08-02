@@ -43,4 +43,4 @@ run {
     }
 }
 
-mainClassName = 'edu.iastate.research.Simulator'
+mainClassName = 'edu.iastate.research.influence.maximization.algorithms.MaxTargetInfluentialNodeWithTIM'
