@@ -15,6 +15,15 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
 
     RandomRRSetGenerator randomRRSetGenerator;
     String targetLabel = null;
+    TIMRandomRRSetMap timRandomRRSetMap;
+
+    public MaxTargetInfluentialNodeWithTIM() {
+        this.timRandomRRSetMap = new TIMRandomRRSetMap();
+
+    }
+    public MaxTargetInfluentialNodeWithTIM(TIMRandomRRSetMap timRandomRRSetMap) {
+        this.timRandomRRSetMap = timRandomRRSetMap;
+    }
 
     @Override
     public List<NodeWithInfluence> find(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
@@ -45,10 +54,10 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
             double c = z * Math.pow(2, i);
             double sum = 0;
             for (int j = 1; j <=c ; j++) {
-                RandomRRSet randromRRSet = this.randomRRSetGenerator.generateRandomRRSetWithLabel(this.targetLabel);
+                RandomRRSet randomRRSet = this.randomRRSetGenerator.generateRandomRRSetWithLabel(this.targetLabel);
 
                 //Calculate K(R)
-                double a = 1 - Double.valueOf(randromRRSet.width)/Double.valueOf(m);
+                double a = 1 - Double.valueOf(randomRRSet.width)/Double.valueOf(m);
                 double k_r = 1 - Math.pow(a, k);
                 sum+=k_r;
             }
@@ -63,46 +72,66 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
         
     }
 
-    private Set<Vertex> nodeSelection(DirectedGraph graph, double epsilon, double opt, int k) {
+    private Set<Integer> nodeSelection(DirectedGraph graph, double epsilon, double opt, int k) {
         int n = graph.getNumberOfVertices();
         int m = graph.getNoOfEdges();
         double R = (8+2 * epsilon) * (Math.log(n) + Math.log(2) + n * logcnk(n,k))/(epsilon * epsilon * opt);
         RandomRRSetGenerator randomRRSetGenerator = new RandomRRSetGenerator(graph);
         HashMap<Vertex, Integer> vertexCount = new HashMap<>();
+        System.out.println("R value is " + R);
+        int maxSize = 0;
+        int[][] randomRRSetArray = new int[(int)Math.ceil(R)][];
+        long startTime, endTime;
+        long totalTime = 0;
         for (int i = 0; i < R; i++) {
+            startTime = System.currentTimeMillis();
             RandomRRSet randomRRSet = randomRRSetGenerator.generateRandomRRSet();
-            for (Vertex u :
+            endTime = System.currentTimeMillis();
+            totalTime = totalTime + endTime - startTime;
+            randomRRSet.setId(i);
+            for (Integer u :
                     randomRRSet.randomRRSet) {
-                int count = 0;
-                if(vertexCount.get(u)!=null) {
-                    count = vertexCount.get(u);
-                }
-                count++;
-                vertexCount.put(u, count);
+                this.timRandomRRSetMap.incrementCountForVertex(u, randomRRSet);
+            }
+            randomRRSetArray[i] = new int[randomRRSet.randomRRSet.size()];
+            int j = 0;
+            for (Integer setId :
+                    randomRRSet.randomRRSet) {
+                randomRRSetArray[i][j++] = setId;
+            }
+            if(randomRRSet.randomRRSet.size()>maxSize) maxSize = randomRRSet.randomRRSet.size();
+
+            if(i%1000000==0 && i>0) {
+                System.out.println("Generated RR Set" + i);
+                System.out.println("Max Size so far is " + maxSize);
+                System.out.println("Average time to initialise random RR set : " + (double)totalTime/(double) (i+1));
             }
         }
+        System.out.println("RR Sets generated size: " + randomRRSetArray.length);
 
-        Set<Vertex> seedSet = new HashSet<>();
+        Set<Integer> seedSet = new HashSet<>();
         for (int i = 0; i < k; i++) {
-            seedSet.add(getMaximumVertex(vertexCount));
+            System.out.println("Starting " + i);
+            seedSet.add(getMaximumVertex(this.timRandomRRSetMap));
+            System.out.println("Finishing " + i);
         }
 
         return seedSet;
     }
 
-    private Vertex getMaximumVertex(HashMap<Vertex, Integer> vertexMap) {
+    private Integer getMaximumVertex(TIMRandomRRSetMap timRandomRRSetMap) {
         int maxCount = Integer.MIN_VALUE;
-        Vertex maxVertex = null;
-        for (Vertex v:
-             vertexMap.keySet()) {
-            int c = vertexMap.get(v);
+        Integer maxVertex = null;
+        for (Integer v:
+             timRandomRRSetMap.getVertices()) {
+            int c = timRandomRRSetMap.countForVertex(v);
             if(c>maxCount) {
                 maxVertex = v;
                 maxCount = c;
             }
 
         }
-        vertexMap.remove(maxVertex);
+        timRandomRRSetMap.removeVertexEntry(maxVertex);
         return maxVertex;
     }
 
@@ -123,21 +152,17 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
 
     public static void main(String[] args) {
         DirectedGraph graph = new FileDataReader("graph_ic.inf", 1.0f).createGraphFromData();
+        Vertex.setPropagationProbability(0.01f);
         MaxTargetInfluentialNodeWithTIM maxTargetInfluentialNode = new MaxTargetInfluentialNodeWithTIM();
         maxTargetInfluentialNode.randomRRSetGenerator = new RandomRRSetGenerator(graph);
         maxTargetInfluentialNode.targetLabel = null;
-        int k = 20;
+        int k = 40;
         double epsilon = 0.1;
         double kpt = maxTargetInfluentialNode.estimateKPT(graph, k);
-        Set<Vertex> seedSet = maxTargetInfluentialNode.nodeSelection(graph, epsilon, kpt, k);
-        Set<Integer> seedSetInteger = new HashSet<>();
-        for (Vertex v:
-             seedSet) {
-            seedSetInteger.add(v.getId());
-            System.out.println("Seed set " + v.getId());
-        }
+        Set<Integer> seedSet = maxTargetInfluentialNode.nodeSelection(graph, epsilon, kpt, k);
 
-        Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graph, seedSetInteger, 10000, new HashSet<>());
+
+        Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graph, seedSet, 10000, new HashSet<>());
         System.out.println("Activated set size : "+ activatedSet.size());
     }
 

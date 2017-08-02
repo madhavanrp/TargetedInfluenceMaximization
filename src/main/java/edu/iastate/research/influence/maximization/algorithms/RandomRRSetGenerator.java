@@ -16,7 +16,7 @@ public class RandomRRSetGenerator {
     }
 
     public RandomRRSet generateRandomRRSet() {
-        return generateRandomRRSetWithLabel(null);
+         return generateRandomRRSetWithLabel(null);
     }
 
     public RandomRRSet generateRandomRRSetWithLabel(String label) {
@@ -31,20 +31,21 @@ public class RandomRRSetGenerator {
 
         Queue<Vertex> queue = new LinkedList<>();
         queue.add(randomVertex);
-        Set<Vertex> randomRRSet= new HashSet<>();
+        Set<Integer> randomRRSet= new HashSet<>();
         int width = 0;
         while (!queue.isEmpty()) {
             Vertex u = queue.remove();
-            if(randomRRSet.contains(u)) continue;
-            randomRRSet.add(u);
+            if(randomRRSet.contains(u.getId())) continue;
+            randomRRSet.add(u.getId());
             width+= u.getIndDegree();
             for (Vertex v :
                     u.getInBoundNeighbours()) {
-                if (!(new Random().nextFloat() < (1 - v.getPropagationProbability(u)))) {
+                if (!(ThreadLocalRandom.current().nextFloat() < (1 - v.getPropagationProbability(u)))) {
                     queue.add(v);
                 }
             }
         }
-        return new RandomRRSet(randomRRSet, width);
+        RandomRRSet randomRRset = new RandomRRSet(randomRRSet, width);
+        return randomRRset;
     }
 }
