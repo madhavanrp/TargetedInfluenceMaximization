@@ -6,6 +6,7 @@ import edu.iastate.research.graph.utilities.FileDataReader;
 import edu.iastate.research.influence.maximization.diffusion.IndependentCascadeModel;
 import edu.iastate.research.influence.maximization.models.NodeWithInfluence;
 
+import java.io.*;
 import java.util.*;
 
 /**
@@ -19,7 +20,6 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
     int[][] randomRRSetArray;
 
     public MaxTargetInfluentialNodeWithTIM() {
-        this.timRandomRRSetMap = new TIMRandomRRSetMap();
 
     }
     public MaxTargetInfluentialNodeWithTIM(TIMRandomRRSetMap timRandomRRSetMap) {
@@ -28,25 +28,12 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
 
     @Override
     public List<NodeWithInfluence> find(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
-        this.randomRRSetGenerator = new RandomRRSetGenerator(graph);
-        for (String label: targetLabels) {
-            this.targetLabel = label;
-            break;
-        }
-//        double kpt = estimateKPT(graph, 10);
-//        PriorityQueue<Vertex> queue = nodeSelection(graph, 0, kpt, 10);
-//        NodeWithInfluence nodeWithInfluence = new NodeWithTotalInfluence(queue.remove().getId(), 10,10, 0);
-//        List<NodeWithInfluence> nodeWithInfluences = new ArrayList<>();
-//        nodeWithInfluences.add(nodeWithInfluence);
-//        System.out.println("Returning");
-//        return nodeWithInfluences;
         return new ArrayList<>();
     }
 
 
-    protected double estimateKPT(DirectedGraph graph, int k) {
-        int n = graph.getNumberOfVertices();
-        int m = graph.getNoOfEdges();
+    protected double estimateKPT(Object[] graph, int m, int k) {
+        int n = graph.length;
         //log_2(n) - #TODO: Does this need more accurate computation?
         double y = logBase2(n);
         int l = 1;
@@ -73,14 +60,13 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
         
     }
 
-    private Set<Integer> nodeSelection(DirectedGraph graph, double epsilon, double opt, int k) {
-        int n = graph.getNumberOfVertices();
-        int m = graph.getNoOfEdges();
+    private Set<Integer> nodeSelection(Object[] graph, int[] inDegree, double epsilon, double opt, int k) {
+        int n = graph.length;
         double R = (8+2 * epsilon) * (Math.log(n) + Math.log(2) + n * logcnk(n,k))/(epsilon * epsilon * opt);
-        RandomRRSetGenerator randomRRSetGenerator = new RandomRRSetGenerator(graph);
-        HashMap<Vertex, Integer> vertexCount = new HashMap<>();
+        RandomRRSetGenerator randomRRSetGenerator = new RandomRRSetGenerator(graph, inDegree);
         System.out.println("R value is " + R);
         int maxSize = 0;
+        int[] some = new int[(int)Math.ceil(R)];
         int[][] randomRRSetArray = new int[(int)Math.ceil(R)][];
         this.randomRRSetArray = randomRRSetArray;
         long startTime, endTime;
@@ -131,8 +117,7 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
         int maxCount = Integer.MIN_VALUE;
         Integer maxVertex = null;
         System.out.println("Starting to take max vertex");
-        for (Integer v:
-             timRandomRRSetMap.getVertices()) {
+        for (int v = 0; v< this.graph.length;v++) {
             int c = timRandomRRSetMap.countForVertex(v);
             if(c>maxCount) {
                 maxVertex = v;
@@ -162,19 +147,52 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
     }
 
     public static void main(String[] args) {
-        DirectedGraph graph = new FileDataReader("graph_ic.inf", 1.0f).createGraphFromData();
-        Vertex.setPropagationProbability(0.01f);
+        Object[] graph = new FileDataReader("graph_ic.inf", 0.01f).readSimpleGraph();
+        System.out.println("Read graph " + graph.length);
         MaxTargetInfluentialNodeWithTIM maxTargetInfluentialNode = new MaxTargetInfluentialNodeWithTIM();
-        maxTargetInfluentialNode.randomRRSetGenerator = new RandomRRSetGenerator(graph);
+        maxTargetInfluentialNode.timRandomRRSetMap = new TIMRandomRRSetMap(graph);
+        int[] inDegree = maxTargetInfluentialNode.inDegree(graph);
+        int m = maxTargetInfluentialNode.edges(graph);
+        maxTargetInfluentialNode.randomRRSetGenerator = new RandomRRSetGenerator(graph, inDegree);
         maxTargetInfluentialNode.targetLabel = null;
+        maxTargetInfluentialNode.graph = graph;
         int k = 40;
         double epsilon = 0.1;
-        double kpt = maxTargetInfluentialNode.estimateKPT(graph, k);
-        Set<Integer> seedSet = maxTargetInfluentialNode.nodeSelection(graph, epsilon, kpt, k);
+        double kpt = maxTargetInfluentialNode.estimateKPT(graph, m, k);
+        System.out.println("KPT estimate is " + kpt);
+        Set<Integer> seedSet = maxTargetInfluentialNode.nodeSelection(graph, inDegree, epsilon, kpt, k);
+
+        System.out.println("Seed set: " + seedSet);
+//        Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graph, seedSet, 10000, new HashSet<>());
+//        System.out.println("Activated set size : "+ activatedSet.size());
 
 
-        Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graph, seedSet, 10000, new HashSet<>());
-        System.out.println("Activated set size : "+ activatedSet.size());
     }
+
+    private int edges(Object[] graph) {
+        int m = 0;
+        for (int i = 0; i < graph.length; i++) {
+            List<Integer> outboundVertices = (List<Integer>) graph[i];
+            for (Integer v :
+                    outboundVertices) {
+                m++;
+            }
+        }
+        return m;
+    }
+
+    private int[] inDegree(Object[] graph) {
+        int[] inDegree = new int[graph.length];
+        for (int i = 0; i < graph.length; i++) {
+            List<Integer> outboundVertices = (List<Integer>) graph[i];
+            for (Integer v :
+                    outboundVertices) {
+                inDegree[v] = inDegree[v] + 1;
+            }
+        }
+        return inDegree;
+    }
+
+    private Object[] graph;
 
 }

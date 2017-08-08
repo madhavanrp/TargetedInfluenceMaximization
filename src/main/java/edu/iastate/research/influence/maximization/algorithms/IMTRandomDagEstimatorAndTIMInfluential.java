@@ -26,8 +26,8 @@ public class IMTRandomDagEstimatorAndTIMInfluential extends IMWithTargetLabelsWi
     public List<NodeWithInfluence> findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
         TIMRandomRRSetMap timStructure = this.TIMDataStructures.get(seedSet);
         if(timStructure == null) {
-            timStructure = new TIMRandomRRSetMap();
-            this.TIMDataStructures.put(seedSet, timStructure);
+//            timStructure = new TIMRandomRRSetMap();
+//            this.TIMDataStructures.put(seedSet, timStructure);
 
         }
         return new MaxTargetInfluentialNodeWithTIM(timStructure).find(graph, nodes, seedSet, targetLabels, noOfSimulations);

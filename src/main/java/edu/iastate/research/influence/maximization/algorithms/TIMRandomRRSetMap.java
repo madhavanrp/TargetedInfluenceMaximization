@@ -10,18 +10,15 @@ import java.util.*;
 public class TIMRandomRRSetMap {
 
     //This has the following structure: {<vertex>: [count, List of random RR sets in which it appears]}
-    private HashMap<Integer, List<Object>> lookupTable;
-    public TIMRandomRRSetMap() {
-        this.lookupTable = new HashMap<>();
+    private Object[] lookupTable;
+    public TIMRandomRRSetMap(Object[] graph) {
+        this.lookupTable = new Object[graph.length];
 
 
-    }
-    public Collection<Integer> getVertices() {
-        return this.lookupTable.keySet();
     }
 
     public void removeVertexEntry(Integer u, int[][] randomRRSetArray) {
-        List<Object> entry = this.lookupTable.get(u);
+        List<Object> entry = (List<Object>)this.lookupTable[u];
         if(entry==null) return;
         Collection<Integer>  setsCoveredByVertex = (Collection<Integer>) entry.get(1);
         System.out.println(String.format("Number of sets covered by %d is %d", u, setsCoveredByVertex.size()));
@@ -35,11 +32,11 @@ public class TIMRandomRRSetMap {
             }
         }
 
-        this.lookupTable.remove(u);
+        this.lookupTable[u] = null;
     }
 
     public void decrementCountForVertex(int u, int setID) {
-        List<Object> entry = this.lookupTable.get(u);
+        List<Object> entry = (List<Object>)this.lookupTable[u];
         if(entry==null) return;
         int count = (int)entry.get(0);
         count--;
@@ -49,7 +46,7 @@ public class TIMRandomRRSetMap {
     }
 
     public void incrementCountForVertex(Integer vertex, int randomRRSetID) {
-        List<Object> list = this.lookupTable.get(vertex);
+        List<Object> list = (List<Object>)this.lookupTable[vertex];
         if(list==null) {
             list = new ArrayList();
             list.add(0);
@@ -60,10 +57,11 @@ public class TIMRandomRRSetMap {
         list.set(0, count);
         Collection<Integer> sets = (Collection<Integer>)list.get(1);
         sets.add(randomRRSetID);
-        this.lookupTable.put(vertex, list);
+        this.lookupTable[vertex] = list;
     }
 
     public int countForVertex(Integer u) {
-        return (Integer)this.lookupTable.get(u).get(0);
+        List<Object> entry = (List<Object>)this.lookupTable[u];
+        return (Integer)entry.get(0);
     }
 }

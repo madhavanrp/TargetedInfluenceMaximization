@@ -10,9 +10,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * Created by madhavanrp on 7/26/17.
  */
 public class RandomRRSetGenerator {
-    private List<Vertex> vertices;
-    public RandomRRSetGenerator(DirectedGraph graph) {
-        this.vertices = new ArrayList<>(graph.getVertices());
+    private Object[] graph;
+    private int[] inDegree;
+    public RandomRRSetGenerator(Object[] graph, int[] inDegree) {
+        this.graph = graph;
+        this.inDegree = inDegree;
     }
 
     public int[][] generateRandomRRSet() {
@@ -20,32 +22,30 @@ public class RandomRRSetGenerator {
     }
 
     public int[][] generateRandomRRSetWithLabel(String label) {
-        Vertex randomVertex = null;
-        while(randomVertex==null) {
-            int i = ThreadLocalRandom.current().nextInt(0, this.vertices.size());
-            randomVertex = this.vertices.get(i);
-            if(label!=null && (randomVertex.getLabel().compareToIgnoreCase(label)!=0)) {
-                randomVertex = null;
-            }
+        int randomVertex = -1;
+        while(randomVertex==-1) {
+            int i = ThreadLocalRandom.current().nextInt(0, this.graph.length);
+            randomVertex = i;
         }
 
-        Queue<Vertex> queue = new LinkedList<>();
+        Queue<Integer> queue = new LinkedList<>();
         queue.add(randomVertex);
         Set<Integer> randomRRSet= new HashSet<>();
         int width = 0;
         while (!queue.isEmpty()) {
-            Vertex u = queue.remove();
-            if(randomRRSet.contains(u.getId())) continue;
-            randomRRSet.add(u.getId());
-            width+= u.getIndDegree();
-            for (Vertex v :
-                    u.getInBoundNeighbours()) {
-                if (!(ThreadLocalRandom.current().nextFloat() < (1 - v.getPropagationProbability(u)))) {
-                    queue.add(v);
+            int u = queue.remove();
+            if(randomRRSet.contains(u)) continue;
+            randomRRSet.add(u);
+            //TODO: Change width
+            width+= inDegree[u];
+            for (Integer v :
+                    (List<Integer>)this.graph[u]) {
+                if (!(ThreadLocalRandom.current().nextFloat() < (1 - 1f/Float.valueOf(inDegree[v])))) {
+                    if(!randomRRSet.contains(v))
+                        queue.add(v);
                 }
             }
         }
-        width = ThreadLocalRandom.current().nextInt(0,50);
         //Using this structure instead of a class to attempt to use less memory
         int[][] randomRRSet2DArray = new int[3][];
         // Set the ID
