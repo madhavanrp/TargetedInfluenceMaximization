@@ -1,6 +1,9 @@
 package edu.iastate.research.influence.maximization.algorithms;
 
 
+import edu.iastate.research.graph.models.SimpleGraph;
+import org.apache.commons.lang.ArrayUtils;
+
 import java.util.*;
 
 
@@ -10,19 +13,20 @@ import java.util.*;
 public class TIMRandomRRSetMap {
 
     //This has the following structure: {<vertex>: [count, List of random RR sets in which it appears]}
-    private Object[] lookupTable;
-    public TIMRandomRRSetMap(Object[] graph) {
-        this.lookupTable = new Object[graph.length];
-
+    private List<Integer>[] lookupTable;
+    public TIMRandomRRSetMap(SimpleGraph graph) {
+        this.lookupTable = new ArrayList[graph.getNumberOfVertices()];
 
     }
 
+    public List<Integer> get(int vertex) {
+        return this.lookupTable[vertex];
+    }
+
     public void removeVertexEntry(Integer u, int[][] randomRRSetArray) {
-        List<Object> entry = (List<Object>)this.lookupTable[u];
-        if(entry==null) return;
-        Collection<Integer>  setsCoveredByVertex = (Collection<Integer>) entry.get(1);
-        System.out.println(String.format("Number of sets covered by %d is %d", u, setsCoveredByVertex.size()));
-        for (Integer setID :
+        List<Integer>  setsCoveredByVertex = this.lookupTable[u];
+        if(setsCoveredByVertex==null) return;
+        for (int setID :
                 setsCoveredByVertex) {
             int[] verticesInSet = randomRRSetArray[setID];
             for (int i = 0; i < verticesInSet.length; i++) {
@@ -36,32 +40,32 @@ public class TIMRandomRRSetMap {
     }
 
     public void decrementCountForVertex(int u, int setID) {
-        List<Object> entry = (List<Object>)this.lookupTable[u];
+        List<Integer> entry = this.lookupTable[u];
         if(entry==null) return;
-        int count = (int)entry.get(0);
-        count--;
-        entry.set(0, count);
-        Collection<Integer> setsCovered = (Collection<Integer>)entry.get(1);
-        setsCovered.remove((Integer) setID); //This actually removes the integer Object! Not at integer the index. The typecast ensures that.
+        int count = entry.size();
+//        entry = ArrayUtils.removeElement(entry, setID);
+        entry.remove((Integer)setID);
+        this.lookupTable[u] = entry;
     }
 
     public void incrementCountForVertex(Integer vertex, int randomRRSetID) {
-        List<Object> list = (List<Object>)this.lookupTable[vertex];
-        if(list==null) {
-            list = new ArrayList();
-            list.add(0);
-            list.add(new HashSet<Integer>());
+        List<Integer> rrSetsCovered = this.lookupTable[vertex];
+        int oldLength = 0;
+        if(rrSetsCovered==null) {
+            rrSetsCovered = new ArrayList<>();
         }
-        int count = (Integer)list.get(0);
-        count++;
-        list.set(0, count);
-        Collection<Integer> sets = (Collection<Integer>)list.get(1);
-        sets.add(randomRRSetID);
-        this.lookupTable[vertex] = list;
+//        else {
+//            oldLength = rrSetsCovered.length;
+//            rrSetsCovered = Arrays.copyOf(rrSetsCovered, oldLength+1);
+//        }
+//        rrSetsCovered[oldLength] = randomRRSetID;
+        rrSetsCovered.add(randomRRSetID);
+        this.lookupTable[vertex] = rrSetsCovered;
     }
 
     public int countForVertex(Integer u) {
-        List<Object> entry = (List<Object>)this.lookupTable[u];
-        return (Integer)entry.get(0);
+        List<Integer> rrSetsCovered = this.lookupTable[u];
+        if(rrSetsCovered==null) return 0;
+        return rrSetsCovered.size();
     }
 }

@@ -1,7 +1,6 @@
 package edu.iastate.research.influence.maximization.algorithms;
 
-import edu.iastate.research.graph.models.DirectedGraph;
-import edu.iastate.research.graph.models.Vertex;
+import edu.iastate.research.graph.models.SimpleGraph;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -10,55 +9,51 @@ import java.util.concurrent.ThreadLocalRandom;
  * Created by madhavanrp on 7/26/17.
  */
 public class RandomRRSetGenerator {
-    private Object[] graph;
-    private int[] inDegree;
-    public RandomRRSetGenerator(Object[] graph, int[] inDegree) {
-        this.graph = graph;
-        this.inDegree = inDegree;
+    private int[][] graph;
+    private int n;
+    private int inDegree[];
+    private int[][] graphTranspose;
+
+    public RandomRRSetGenerator(SimpleGraph simpleGraph) {
+        this.graph = simpleGraph.getGraph();
+        this.n = simpleGraph.getNumberOfVertices();
+        this.graphTranspose = simpleGraph.getGraphTranspose();
+        this.inDegree = simpleGraph.getInDegree();
     }
 
-    public int[][] generateRandomRRSet() {
-         return generateRandomRRSetWithLabel(null);
-    }
-
-    public int[][] generateRandomRRSetWithLabel(String label) {
-        int randomVertex = -1;
-        while(randomVertex==-1) {
-            int i = ThreadLocalRandom.current().nextInt(0, this.graph.length);
-            randomVertex = i;
-        }
-
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(randomVertex);
-        Set<Integer> randomRRSet= new HashSet<>();
+    public int[][] generateRandomRRSetWithLabel() {
         int width = 0;
+
+        int random = ThreadLocalRandom.current().nextInt(0, this.n);
+        Set<Integer> visited = new HashSet<>();
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(random);
         while (!queue.isEmpty()) {
-            int u = queue.remove();
-            if(randomRRSet.contains(u)) continue;
-            randomRRSet.add(u);
-            //TODO: Change width
-            width+= inDegree[u];
-            for (Integer v :
-                    (List<Integer>)this.graph[u]) {
-                if (!(ThreadLocalRandom.current().nextFloat() < (1 - 1f/Float.valueOf(inDegree[v])))) {
-                    if(!randomRRSet.contains(v))
-                        queue.add(v);
-                }
+            int vertex = queue.remove();
+            if (visited.contains(vertex)) continue;
+            visited.add(vertex);
+            int[] incomingVertices = this.graphTranspose[vertex];
+            for (int incoming :
+                    incomingVertices) {
+                width++;
+                if (visited.contains(incoming)) continue;
+                float p = ThreadLocalRandom.current().nextFloat();
+                float propogationProbability = Float.valueOf(1) / Float.valueOf(this.inDegree[vertex]);
+                if (p > propogationProbability) continue;
+                queue.add(incoming);
             }
         }
-        //Using this structure instead of a class to attempt to use less memory
-        int[][] randomRRSet2DArray = new int[3][];
-        // Set the ID
-        randomRRSet2DArray[0] = new int[1];
-        randomRRSet2DArray[1] = new int[randomRRSet.size()];
-        int i = 0;
-        for (Integer setID :
-                randomRRSet) {
-            randomRRSet2DArray[1][i++] = setID;
+        int[] rrSet = new int[visited.size()];
+        int j = 0;
+        for (int v : visited) {
+            rrSet[j++] = v;
         }
-        randomRRSet2DArray[2] = new int[1];
-        randomRRSet2DArray[2][0] = width;
 
-        return randomRRSet2DArray;
+        int[][] rrSetData = new int[2][];
+        rrSetData[0] = rrSet;
+        rrSetData[1] = new int[]{width};
+        return rrSetData;
     }
+
+
 }
