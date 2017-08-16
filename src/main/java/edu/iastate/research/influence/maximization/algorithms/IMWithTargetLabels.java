@@ -57,12 +57,13 @@ public abstract class IMWithTargetLabels {
     }
 
 
-    public abstract List<NodeWithInfluence> findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations);
+    public abstract List<NodeWithInfluence> findMaxInfluentialNode(Object graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations);
 
     public void constructIMTree(DirectedGraph graph, int budget, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, int noOfSimulations, String nonTargetsEstimateFilename, String experimentName) {
         int depth = 0;
         maxInfluenceTree = new IMTree();
         IMTreeNode root = maxInfluenceTree.getRoot();
+        root.setPathID(-1);
         maxLeaf = root;
         Queue<IMTreeNode> firstQueue = new LinkedList<>();
         Queue<IMTreeNode> secondQueue = new LinkedList<>();
@@ -78,24 +79,23 @@ public abstract class IMWithTargetLabels {
         logger.info(String.format("Time taken for phase 1 is : " + TimeUnit.MILLISECONDS.convert(phase1Time, TimeUnit.NANOSECONDS)));
         long phase2StartTime = System.nanoTime();
         init(graph, targetLabels, noOfSimulations);
-        while (!((firstQueue.isEmpty() && secondQueue.isEmpty()) || depth >= budget)) {
+
+        Object phase2Graph = getPhase2FormattedGraph(graph);
+
+        // While one of the queues is non-empty and the depth is less than the budget
+        while ((!firstQueue.isEmpty() || !secondQueue.isEmpty()) && depth<budget) {
 
             if (!firstQueue.isEmpty()) {
                 depth++;
             }
-            //logger.info("Start Process the tree for level :" + depth);
-            processTreeLevel(graph, nonTargetThreshold, targetLabels, nonTargetLabels, secondQueue, firstQueue, nonTargetsEstimateMap, noOfSimulations);
-            //logger.info("End Process the tree for level :" + depth);
+            processTreeLevel(phase2Graph, nonTargetThreshold, targetLabels, nonTargetLabels, secondQueue, firstQueue, nonTargetsEstimateMap, noOfSimulations);
             if (depth >= budget) {
                 break;
-            } else {
-                if (!secondQueue.isEmpty()) {
-                    depth++;
-                }
-                //logger.info("Start Process the tree for level :" + depth);
-                processTreeLevel(graph, nonTargetThreshold, targetLabels, nonTargetLabels, firstQueue, secondQueue, nonTargetsEstimateMap, noOfSimulations);
-                //logger.info("End Process the tree for level :" + depth);
             }
+            if (!secondQueue.isEmpty()) {
+                depth++;
+            }
+            processTreeLevel(phase2Graph, nonTargetThreshold, targetLabels, nonTargetLabels, firstQueue, secondQueue, nonTargetsEstimateMap, noOfSimulations);
         }
         long phase2EndTime = System.nanoTime();
         long phase2Time = phase2EndTime - phase2StartTime;
@@ -120,7 +120,8 @@ public abstract class IMWithTargetLabels {
 
     }
 
-    void processTreeLevel(DirectedGraph graph, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, Queue<IMTreeNode> firstQueue, Queue<IMTreeNode> secondQueue, Map<Integer, Set<Integer>> nonTargetsEstimateMap, int noOfSimulations) {
+    void processTreeLevel(Object graphObject, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, Queue<IMTreeNode> firstQueue, Queue<IMTreeNode> secondQueue, Map<Integer, Set<Integer>> nonTargetsEstimateMap, int noOfSimulations) {
+        DirectedGraph graph = (DirectedGraph) graphObject;
         IMTreeNode current;
         logger.info("Number of nodes at level : " + secondQueue.size());
         while (!secondQueue.isEmpty()) {
@@ -174,6 +175,10 @@ public abstract class IMWithTargetLabels {
             current = current.getParent();
         }
         return targetsActivated;
+    }
+
+    protected Object getPhase2FormattedGraph(DirectedGraph graph) {
+        return graph;
     }
 
 

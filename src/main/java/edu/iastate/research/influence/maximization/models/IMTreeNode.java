@@ -13,6 +13,7 @@ public class IMTreeNode implements Serializable{
     private double activeTargets;
     private int activeNonTargets;
     private IMTreeNode parent;
+    private int pathID;
 
     /**
      * Getter for property 'queue'.
@@ -72,6 +73,9 @@ public class IMTreeNode implements Serializable{
         this.activeNonTargets = nonTargetsActivated;
         this.activeTargets = maxInfluentialNode.getInfluence();
         this.parent = parent;
+        int pathID = parent.getPathID();
+        if(pathID==-1) {
+        }
     }
 
     /**
@@ -144,5 +148,13 @@ public class IMTreeNode implements Serializable{
     @Override
     public String toString() {
         return node + "";
+    }
+
+    public int getPathID() {
+        return pathID;
+    }
+
+    public void setPathID(int pathID) {
+        this.pathID = pathID;
     }
 }

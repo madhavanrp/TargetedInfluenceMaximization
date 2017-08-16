@@ -17,7 +17,8 @@ public class IMTRandomDAGEstimatorAndDegreeDiscount extends IMWithTargetLabelsWi
     }
 
     @Override
-    public List<NodeWithInfluence> findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+    public List<NodeWithInfluence> findMaxInfluentialNode(Object graphObject, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+        DirectedGraph graph = (DirectedGraph)graphObject;
         return new MaxTargetInfluentialNodeWithDegreeDiscount().find(graph, nodes, seedSet, targetLabels, noOfSimulations);
     }
 }

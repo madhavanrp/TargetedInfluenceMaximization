@@ -29,6 +29,7 @@ public class FileDataReader implements DataReader {
             bufferedReader = new BufferedReader(new InputStreamReader(in));
             String sCurrentLine;
             int m = 0;
+            bufferedReader.readLine();
             while ((sCurrentLine = bufferedReader.readLine()) != null) {
                 String[] inputLine = sCurrentLine.split("\\s", 3);
                 int nodeFrom = Integer.parseInt(inputLine[0]);

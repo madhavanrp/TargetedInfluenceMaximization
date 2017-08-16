@@ -9,7 +9,9 @@ import java.net.URL;
 public class SimpleGraphTest {
     public static SimpleGraph getGraph() {
         URL url = SimpleGraphTest.class.getClassLoader().getResource("graph_ic.inf");
-        SimpleGraph graph = SimpleGraph.fromFile(url.getPath());
+        URL labelURL = SimpleGraphTest.class.getClassLoader().getResource("graph_ic.inf_0.8_labels.txt");
+        SimpleGraph graph = SimpleGraph.fromFileWithLabels(url.getPath(), labelURL.getPath());
+//        SimpleGraph graph = SimpleGraph.fromFile(url.getPath());
         return graph;
     }
     @Test
@@ -19,6 +21,16 @@ public class SimpleGraphTest {
         int m = graph.getNumberOfEdges();
         Assert.assertEquals(15229, n);
         Assert.assertEquals(62752, m);
+    }
+
+    @Test
+    public void testLabels() {
+        SimpleGraph graph = getGraph();
+        boolean label;
+        label = graph.getLabel(8608);
+        Assert.assertFalse(label);
+        Assert.assertFalse(graph.getLabel(3163));
+        Assert.assertTrue(graph.getLabel(9263));
     }
 
     @Test

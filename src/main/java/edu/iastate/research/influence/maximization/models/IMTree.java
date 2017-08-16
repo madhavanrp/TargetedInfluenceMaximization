@@ -11,6 +11,13 @@ import java.util.TreeSet;
 public class IMTree implements Serializable{
 
     private IMTreeNode root;
+    private int pathID = -1;
+
+    public int newPathID() {
+        System.out.println("Creating new path id: " + (pathID+1));
+        pathID++;
+        return pathID;
+    }
 
     public IMTree() {
         this.root = new IMTreeNode(-1, 0, 0, new TreeSet<>(new IMTNodeComparator()),null);

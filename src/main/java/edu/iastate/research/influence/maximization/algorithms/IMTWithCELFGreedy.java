@@ -19,7 +19,7 @@ public class IMTWithCELFGreedy extends IMWithTargetLabels {
     }
 
     @Override
-    public List<NodeWithInfluence> findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+    public List<NodeWithInfluence> findMaxInfluentialNode(Object graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
         return null;
     }
 
@@ -57,7 +57,8 @@ public class IMTWithCELFGreedy extends IMWithTargetLabels {
     }
 
     @Override
-    void processTreeLevel(DirectedGraph graph, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, Queue<IMTreeNode> firstQueue, Queue<IMTreeNode> secondQueue, Map<Integer, Set<Integer>> nonTargetsEstimateMap, int noOfSimulations) {
+    void processTreeLevel(Object graphObject, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, Queue<IMTreeNode> firstQueue, Queue<IMTreeNode> secondQueue, Map<Integer, Set<Integer>> nonTargetsEstimateMap, int noOfSimulations) {
+        DirectedGraph graph = (DirectedGraph)graphObject;
         IMTreeNode current;
         logger.info("Number of nodes at level : " + secondQueue.size());
         Map<Integer, IMTreeNode> maxTreeChildNodeByNotTargetCount = new HashMap<>();

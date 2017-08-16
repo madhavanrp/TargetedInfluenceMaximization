@@ -126,7 +126,8 @@ public class MaxTargetInfluentialNodeWithRandomDAG2 extends MaxTargetInfluential
     }
 
     @Override
-    public List<NodeWithInfluence> find(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+    public List<NodeWithInfluence> find(Object graphObject, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+        DirectedGraph graph = (DirectedGraph)graphObject;
         List<NodeWithInfluence> nodesWithMaxInfluence = new ArrayList<>();
         Map<Integer, Double> nodesInfluenceMap = new HashMap<>();
         for (String dagFileName : dagsReachableSetMap) {

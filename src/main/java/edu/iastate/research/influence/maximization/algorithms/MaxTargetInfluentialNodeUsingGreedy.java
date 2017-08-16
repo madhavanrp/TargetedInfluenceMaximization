@@ -19,7 +19,8 @@ public class MaxTargetInfluentialNodeUsingGreedy extends MaxTargetInfluentialNod
     final static Logger logger = Logger.getLogger(MaxTargetInfluentialNodeUsingGreedy.class);
 
     @Override
-    public List<NodeWithInfluence> find(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+    public List<NodeWithInfluence> find(Object graphObject, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+        DirectedGraph graph = (DirectedGraph)graphObject;
         int maxMarginalInfluenceSpread = Integer.MIN_VALUE;
         int maxInfluentialNode = Integer.MIN_VALUE;
         Set<Integer> alreadyActivatedNodes = performDiffusion(graph, seedSet, noOfSimulations, new HashSet<>());

@@ -13,6 +13,7 @@ public class TIMRandomRRSetMapTest {
     private TIMRandomRRSetMap map;
     @Before
     public void setUp() throws Exception {
+        TIMRandomRRSetMap.clearLookupTable();
         SimpleGraph graph = SimpleGraphTest.getGraph();
         this.map = new TIMRandomRRSetMap(graph);
 

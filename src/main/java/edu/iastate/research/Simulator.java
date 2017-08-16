@@ -32,19 +32,19 @@ public class Simulator {
         } else {
             Scanner sc = new Scanner(System.in);
             System.out.println("Enter Graph File Name");
-            String filename = sc.next();
+            String filename = "graph_ic.inf";
             System.out.println("Enter the propagation probability");
-            float probability = Float.parseFloat(sc.next());
+            float probability = 0.05f;
             System.out.println("Enter percentage of A's to be in Graph");
-            int percent = sc.nextInt();
+            int percent = 80;
             System.out.println("Enter budget of seed set");
-            int budget = sc.nextInt();
+            int budget = 20;
             System.out.println("Enter non target threshold");
-            int nonTargetThreshold = sc.nextInt();
+            int nonTargetThreshold = 10;
             System.out.println("Enter the NonTargetsEstimate filename");
-            String nonTargetsEstimateFilename = "";
+            String nonTargetsEstimateFilename = "a3318909-be83-43c5-bcd4-1e9bd7d57234-non-targets-map.data";
             System.out.println("Enter the Influence Maximization Strategy (1-6)");
-            int strategy = sc.nextInt();
+            int strategy = 6;
             setupLogger(filename + "_" + probability + "_" + percent + "_" + budget + "_" + nonTargetThreshold + "_" + "_" + strategy + "_" + System.currentTimeMillis() + ".log");
             wikiGraphDifferentComobination(filename, probability, percent, budget, nonTargetThreshold, nonTargetsEstimateFilename, strategy);
         }

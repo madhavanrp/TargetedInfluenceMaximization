@@ -104,7 +104,8 @@ public class MaxTargetInfluentialNodeWithRandomDAG extends MaxTargetInfluentialN
     }
 
     @Override
-    public List<NodeWithInfluence> find(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+    public List<NodeWithInfluence> find(Object graphObject, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+        DirectedGraph graph = (DirectedGraph)graphObject;
         int maxMarginalInfluenceSpread = Integer.MIN_VALUE;
         int maxInfluentialNode = Integer.MIN_VALUE;
         Set<Integer> reachableTargetNodesWithSeedSet = new HashSet<>();

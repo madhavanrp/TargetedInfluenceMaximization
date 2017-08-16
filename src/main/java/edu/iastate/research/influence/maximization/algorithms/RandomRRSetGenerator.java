@@ -9,13 +9,13 @@ import java.util.concurrent.ThreadLocalRandom;
  * Created by madhavanrp on 7/26/17.
  */
 public class RandomRRSetGenerator {
-    private int[][] graph;
+    private SimpleGraph graph;
     private int n;
     private int inDegree[];
     private int[][] graphTranspose;
 
     public RandomRRSetGenerator(SimpleGraph simpleGraph) {
-        this.graph = simpleGraph.getGraph();
+        this.graph = simpleGraph;
         this.n = simpleGraph.getNumberOfVertices();
         this.graphTranspose = simpleGraph.getGraphTranspose();
         this.inDegree = simpleGraph.getInDegree();
@@ -25,6 +25,10 @@ public class RandomRRSetGenerator {
         int width = 0;
 
         int random = ThreadLocalRandom.current().nextInt(0, this.n);
+        while(!this.graph.getLabel(random)) {
+            random = ThreadLocalRandom.current().nextInt(0, this.n);
+        }
+
         Set<Integer> visited = new HashSet<>();
         Queue<Integer> queue = new LinkedList<>();
         queue.add(random);

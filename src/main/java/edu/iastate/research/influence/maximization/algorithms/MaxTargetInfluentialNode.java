@@ -11,7 +11,7 @@ import java.util.Set;
  */
 public abstract class MaxTargetInfluentialNode {
 
-    public abstract List<NodeWithInfluence> find(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations);
+    public abstract List<NodeWithInfluence> find(Object graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations);
 
     public static int countTargets(Set<Integer> activatedSet, DirectedGraph graph, Set<String> targetLabels) {
         int targetsCount = 0;

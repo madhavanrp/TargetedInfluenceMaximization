@@ -19,7 +19,8 @@ public class IMTRandomDAGEstimatorAndRandomDAG extends IMWithTargetLabelsWithPru
     }
 
     @Override
-    public List<NodeWithInfluence> findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+    public List<NodeWithInfluence> findMaxInfluentialNode(Object graphObject, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+        DirectedGraph graph = (DirectedGraph)graphObject;
         return getInstance(graph, targetLabels, 200).find(graph, nodes, seedSet, targetLabels, 200);
     }
 }

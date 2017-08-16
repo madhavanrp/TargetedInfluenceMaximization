@@ -22,6 +22,7 @@ public class IMTreeSeedSelector {
 
         List<IMTreeSeedSet> seedSets = new ArrayList<>();
         for(IMTreeNode leaf:leafNodes) {
+            System.out.println(" Path ID for a leaf: " + leaf.getPathID());
             IMTreeSeedSet imSeedSet = new IMTreeSeedSet();
             Set<Integer> seedSet = seedSetFromIMTree.findSeedSetInPath(leaf);
             Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graph, seedSet, 20000, new HashSet<>());
