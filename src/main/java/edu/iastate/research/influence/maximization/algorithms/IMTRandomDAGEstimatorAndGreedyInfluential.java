@@ -1,7 +1,6 @@
 package edu.iastate.research.influence.maximization.algorithms;
 
 import edu.iastate.research.graph.models.DirectedGraph;
-import edu.iastate.research.influence.maximization.diffusion.IndependentCascadeModel;
 import edu.iastate.research.influence.maximization.models.NodeWithInfluence;
 
 import java.util.HashSet;
@@ -14,7 +13,8 @@ import java.util.Set;
  */
 public class IMTRandomDAGEstimatorAndGreedyInfluential extends IMWithTargetLabelsWithPruning {
     @Override
-    public Map<Integer, Integer> estimateNonTargetsByNode(DirectedGraph graph, Set<String> nonTargetLabels, int noOfSimulations) {
+    public Map<Integer, Integer> estimateNonTargetsByNode(Object graphObject, Set<String> nonTargetLabels, int noOfSimulations) {
+        DirectedGraph graph = (DirectedGraph) graphObject;
         return new EstimateNonTargetsUsingRandomDAG().estimate(graph, nonTargetLabels, noOfSimulations);
     }
 

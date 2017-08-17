@@ -13,7 +13,8 @@ import java.util.Set;
 public class IMTGreedyEstimatorAndGreedyInfluential extends IMWithTargetLabelsWithPruning {
 
     @Override
-    public Map<Integer, Integer> estimateNonTargetsByNode(DirectedGraph graph, Set<String> nonTargetLabels, int noOfSimulations) {
+    public Map<Integer, Integer> estimateNonTargetsByNode(Object graphObject, Set<String> nonTargetLabels, int noOfSimulations) {
+        DirectedGraph graph = (DirectedGraph) graphObject;
         return new EstimateNonTargetsUsingGreedy().estimate(graph, nonTargetLabels, noOfSimulations);
     }
 

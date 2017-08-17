@@ -28,7 +28,8 @@ public class IMTRandomDagEstimatorAndTIMInfluential extends IMWithTargetLabelsWi
     }
 
     @Override
-    public Map<Integer, Integer> estimateNonTargetsByNode(DirectedGraph graph, Set<String> nonTargetLabels, int noOfSimulations) {
+    public Map<Integer, Integer> estimateNonTargetsByNode(Object graphObject, Set<String> nonTargetLabels, int noOfSimulations) {
+        DirectedGraph graph = (DirectedGraph) graphObject;
         return new EstimateNonTargetsUsingRandomDAG().estimate(graph, nonTargetLabels, 200);
     }
 
@@ -131,4 +132,5 @@ public class IMTRandomDagEstimatorAndTIMInfluential extends IMWithTargetLabelsWi
     protected Object getPhase2FormattedGraph(DirectedGraph graph) {
         return GraphConversionUtilities.createSimpleGraph(graph);
     }
+
 }

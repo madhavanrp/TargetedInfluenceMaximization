@@ -17,7 +17,8 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
     private String nonTargetLabel;
     private DirectedGraph fullGraph;
     @Override
-    public Map<Integer, Integer> estimate(DirectedGraph graph, Set<String> nonTargetLabels, int noOfSimulations) {
+    public Map<Integer, Integer> estimate(Object graphObject, Set<String> nonTargetLabels, int noOfSimulations) {
+        DirectedGraph graph = (DirectedGraph)graphObject;
         this.fullGraph = graph;
         Map<Integer, Integer> aggregatedNonTargetsMap = new HashMap<>();
         for (String label :

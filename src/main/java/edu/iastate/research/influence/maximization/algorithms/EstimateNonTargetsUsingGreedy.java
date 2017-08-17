@@ -15,7 +15,8 @@ public class EstimateNonTargetsUsingGreedy extends EstimateNonTargets {
     final static Logger logger = Logger.getLogger(EstimateNonTargetsUsingGreedy.class);
 
     @Override
-    public Map<Integer, Integer> estimate(DirectedGraph graph, Set<String> nonTargetLabels, int noOfSimulations) {
+    public Map<Integer, Integer> estimate(Object graphObject, Set<String> nonTargetLabels, int noOfSimulations) {
+        DirectedGraph graph = (DirectedGraph) graphObject;
         Set<Integer> seedSet = new HashSet<>();
         Map<Integer, Integer> nonTargetsEstimateMap = new HashMap<>();
         for (Vertex vertex : graph.getVertices()) {

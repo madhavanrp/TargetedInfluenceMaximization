@@ -35,9 +35,9 @@ public abstract class IMWithTargetLabels {
 
     public Map<Integer, Set<Integer>> nonTargetsEstimateMap;
 
-    public abstract Map<Integer, Integer> estimateNonTargetsByNode(DirectedGraph graph, Set<String> nonTargetLabels, int noOfSimulations);
+    public abstract Map<Integer, Integer> estimateNonTargetsByNode(Object graph, Set<String> nonTargetLabels, int noOfSimulations);
 
-    public Map<Integer, Set<Integer>> estimateNonTargets(DirectedGraph graph, Set<String> nonTargetLabels, int noOfSimulations) {
+    public Map<Integer, Set<Integer>> estimateNonTargets(Object graph, Set<String> nonTargetLabels, int noOfSimulations) {
         Map<Integer, Set<Integer>> nonTargetsEstimatedMapByCount = new HashMap<>();
         Map<Integer, Integer> nonTargetEstimatesByNode = estimateNonTargetsByNode(graph, nonTargetLabels, noOfSimulations);
         for (Integer v : nonTargetEstimatesByNode.keySet()) {
@@ -69,10 +69,12 @@ public abstract class IMWithTargetLabels {
         Queue<IMTreeNode> secondQueue = new LinkedList<>();
         firstQueue.add(root);
         long phase1StartTime = System.nanoTime();
+        Object phase1Graph = getPhase1FormattedGraph(graph);
+
         if (nonTargetsEstimateFilename != "") {
             nonTargetsEstimateMap = estimateNonTargetsFromFile(nonTargetsEstimateFilename);
         } else {
-            nonTargetsEstimateMap = estimateNonTargets(graph, nonTargetLabels, noOfSimulations);
+            nonTargetsEstimateMap = estimateNonTargets(phase1Graph, nonTargetLabels, noOfSimulations);
         }
         long phase1EndTime = System.nanoTime();
         long phase1Time = phase1EndTime-phase1StartTime;
@@ -180,6 +182,7 @@ public abstract class IMWithTargetLabels {
     protected Object getPhase2FormattedGraph(DirectedGraph graph) {
         return graph;
     }
+    protected Object getPhase1FormattedGraph(DirectedGraph graph) { return graph; }
 
 
 }

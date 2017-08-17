@@ -1,10 +1,7 @@
 package edu.iastate.research.graph.models;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SimpleGraph {
@@ -15,7 +12,9 @@ public class SimpleGraph {
     private int inDegree[];
     private int[][] edgeNumbers;
     private int maxIndegree = 0;
+    private int maxDegreeVertex;
     private boolean[] labels;
+    private boolean sizeUnknown = false;
 
     public static SimpleGraph fromFile(String filePath, boolean buildTranspose) {
         SimpleGraph graph = new SimpleGraph();
@@ -27,6 +26,14 @@ public class SimpleGraph {
         SimpleGraph graph = fromFile(filePath);
         graph.readLabels(labelsPath);
         return graph;
+    }
+
+    public SimpleGraph() {
+
+    }
+
+    public SimpleGraph(boolean sizeUnknown) {
+        this.sizeUnknown = sizeUnknown;
     }
 
     public static SimpleGraph fromFileWithLabels(String filePath, float targetPercentage) {
@@ -103,6 +110,8 @@ public class SimpleGraph {
         return inDegree;
     }
 
+    public int getMaxDegreeVertex() { return this.maxDegreeVertex; }
+
     public static SimpleGraph fromFile(String filePath) {
         return fromFile(filePath, true);
     }
@@ -140,14 +149,39 @@ public class SimpleGraph {
     }
 
     public void processEdge(int nodeFrom, int nodeTo) {
+        if(this.sizeUnknown) {
+            // Make sure the vertices can be stored
+            int max = Math.max(nodeFrom, nodeTo);
+            if (graph == null) {
+                this.graph = new int[max+1][];
+                this.graphTranspose = new int[max+1][];
+                this.inDegree = new int[max+1];
+                this.n = max+1;
+                this.labels = new boolean[max+1];
+            }
+
+            if (graph.length < max + 1) {
+                this.graph = Arrays.copyOf(this.graph, max + 1);
+                this.graphTranspose = Arrays.copyOf(this.graphTranspose, max + 1);
+                this.inDegree = Arrays.copyOf(this.inDegree, max + 1);
+                this.n = max+1;
+                this.labels = Arrays.copyOf(this.labels, max + 1);
+            }
+        }
+
         addEdge(this.graph, nodeFrom, nodeTo);
 
         this.inDegree[nodeTo] = this.inDegree[nodeTo] + 1;
-        if(this.inDegree[nodeTo] > this.maxIndegree) this.maxIndegree = this.inDegree[nodeTo];
+        if(this.inDegree[nodeTo] > this.maxIndegree) {
+            this.maxIndegree = this.inDegree[nodeTo];
+            this.maxDegreeVertex = nodeTo;
+        }
         addEdge(this.graphTranspose, nodeTo, nodeFrom);
     }
 
     private void addEdge(int[][] graph, int u, int v) {
+
+
         int[] neighboursU = graph[u];
         if(neighboursU==null) {
             neighboursU = new int[0];
@@ -185,6 +219,45 @@ public class SimpleGraph {
         }
     }
 
+    private Set<Integer> bfs(int startingVertex, int[][] graph, boolean removeStartingNode) {
+        Set<Integer> visited = new HashSet<>();
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(startingVertex);
+        while (!queue.isEmpty()) {
+            int vertex = queue.remove();
+            if (visited.contains(vertex)) continue;
+            visited.add(vertex);
+            int[] outgoingVertices = graph[vertex];
+            for (int incoming :
+                    outgoingVertices) {
+                if (visited.contains(incoming)) continue;
+                queue.add(incoming);
+            }
+        }
+        if(removeStartingNode) {
+            visited.remove(startingVertex);
+        }
+//        int[] reachableNodes = new int[visited.size()];
+//        int i = 0;
+//        for (int u :
+//                visited) {
+//            reachableNodes[i++] = u;
+//        }
+        return visited;
+    }
+
+    public Set<Integer> findAncestors(int vertex) {
+        return bfs(vertex, this.graphTranspose, true);
+    }
+
+    public Set<Integer> findDescendants(int vertex) {
+        return bfs(vertex, this.graph, false);
+    }
+
+    public float getPropagationProbability(int u, int v) {
+        return Float.valueOf(1) / Float.valueOf(this.inDegree[v]);
+    }
+
     public int[] createDag() {
         List<Integer> activeEdges = new ArrayList<>();
         int edgeCount = 0;
@@ -192,8 +265,8 @@ public class SimpleGraph {
             for (int j = 0; j < this.graph[i].length; j++) {
 
                 float p = ThreadLocalRandom.current().nextFloat();
-                float propogationProbability = Float.valueOf(1) / Float.valueOf(this.inDegree[j]);
-                if (p>propogationProbability) {
+                float propagationProbability = getPropagationProbability(i, j);
+                if (p>propagationProbability) {
                     activeEdges.add(edgeCount);
                 }
                 edgeCount++;
