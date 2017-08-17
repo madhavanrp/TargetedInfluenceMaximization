@@ -4,6 +4,7 @@ import com.sun.tools.javac.util.Assert;
 import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.graph.models.SimpleGraph;
 import edu.iastate.research.influence.maximization.algorithms.faster.GraphConversionUtilities;
+import edu.iastate.research.influence.maximization.models.AlgorithmParameters;
 import edu.iastate.research.influence.maximization.models.IMTreeNode;
 import edu.iastate.research.influence.maximization.models.NodeWithInfluence;
 
@@ -40,8 +41,8 @@ public class IMTRandomDagEstimatorAndTIMInfluential extends IMWithTargetLabelsWi
         int n = graph.getNumberOfVertices();
         int m = graph.getNumberOfEdges();
         //TODO: Get these values from somewhere else.
-        int k = 40;
-        double epsilon = 0.1;
+        int k = AlgorithmParameters.getInstance().getBudget();
+        double epsilon = AlgorithmParameters.getInstance().getEpsilon();
         double kpt = MaxTargetInfluentialNodeWithTIM.estimateKPT(this.randomRRSetGenerator, n, m ,k);
         double R = MaxTargetInfluentialNodeWithTIM.calculateRValue(n, epsilon, kpt, k);
         int[][] randomRRSetArray = MaxTargetInfluentialNodeWithTIM.generateRandomRRsetArray(graph, R);
@@ -57,15 +58,13 @@ public class IMTRandomDagEstimatorAndTIMInfluential extends IMWithTargetLabelsWi
         SimpleGraph graph = (SimpleGraph)graphObject;
         this.generateTimDataIfNeeded(graph);
         MaxTargetInfluentialNodeWithTIM maxTargetInfluentialNodeWithTIM;
-//        if (seedSet!=null && !seedSet.isEmpty()) {
-            maxTargetInfluentialNodeWithTIM = this.TIMMaxInfluentialNodeMap.get(seedSet);
-//        }
-//        else {
-//            System.out.println("Seed set size: " + seedSet.size());
-//            maxTargetInfluentialNodeWithTIM = createMaxTargetInfluentialNodeWithTIM(graph);
-//
-//        }
-        return maxTargetInfluentialNodeWithTIM.find(graph, candidateNodes, seedSet, targetLabels, noOfSimulations);
+        maxTargetInfluentialNodeWithTIM = this.TIMMaxInfluentialNodeMap.get(seedSet);
+        List<NodeWithInfluence> maxInfluentialNodes = maxTargetInfluentialNodeWithTIM.find(graph, candidateNodes, seedSet, targetLabels, noOfSimulations);
+        for (NodeWithInfluence nodeWithInfluence:
+             maxInfluentialNodes) {
+            Assert.check(!seedSet.contains(nodeWithInfluence.getNode()));
+        }
+        return maxInfluentialNodes;
     }
 
     private MaxTargetInfluentialNodeWithTIM createMaxTargetInfluentialNodeWithTIM(SimpleGraph graph) {
@@ -78,7 +77,7 @@ public class IMTRandomDagEstimatorAndTIMInfluential extends IMWithTargetLabelsWi
         maxTargetInfluentialNodeWithTIM.setR(this.randomRRSetArray.length);
         double R = maxTargetInfluentialNodeWithTIM.getR();
         maxTargetInfluentialNodeWithTIM.initializeDataStructuresForTIM((int)Math.ceil(R));
-        System.out.println(String.format("Creating %d branch", ++numberOfBranches));
+        ++numberOfBranches;
         return maxTargetInfluentialNodeWithTIM;
     }
 
@@ -86,39 +85,50 @@ public class IMTRandomDagEstimatorAndTIMInfluential extends IMWithTargetLabelsWi
     void processTreeLevel(Object graph, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, Queue<IMTreeNode> firstQueue, Queue<IMTreeNode> secondQueue, Map<Integer, Set<Integer>> nonTargetsEstimateMap, int noOfSimulations) {
         super.processTreeLevel(graph, nonTargetThreshold, targetLabels, nonTargetLabels, firstQueue, secondQueue, nonTargetsEstimateMap, noOfSimulations);
 
-        HashMap<Integer, MaxTargetInfluentialNodeWithTIM> newBranchInfluentialCalculator = new HashMap<>();
-        //First identify the new branches
-        for (IMTreeNode treeNode: firstQueue) {
-            int leafNodePathID = treeNode.getPathID();
-            int parentNodePathID = treeNode.getParent().getPathID();
-            if(leafNodePathID==parentNodePathID) continue;
-
-            //Create a copy
-            System.out.println("Spawning new branch " + leafNodePathID);
+        HashMap<Integer, Set<IMTreeNode>> sharedParents = new HashMap<>();
+        for (IMTreeNode treeNode :
+                firstQueue) {
+            Set<IMTreeNode> leaves = sharedParents.get(treeNode.getParent().getNode());
+            if(leaves == null) leaves = new HashSet<>();
+            leaves.add(treeNode);
+            sharedParents.put(treeNode.getParent().getNode(), leaves);
         }
+
+
         // firstQueue has all the nodes expanded and pruned.
+        Set<Set<Integer>> keysToNotRemove = new HashSet<>();
         for(IMTreeNode treeNode: firstQueue) {
             // Find the seed set along the path. The Hashmap is indexed by the seedSet - current leaf node.
             Set<Integer> seedSetInPath = findSeedSetInPath(treeNode);
             MaxTargetInfluentialNodeWithTIM maxTargetInfluentialNodeWithTIM;
-            int leafNodePathID = treeNode.getPathID();
-            int parentNodePathID = treeNode.getParent().getPathID();
+            int parentNodeID = treeNode.getParent().getNode();
             if(seedSetInPath.size()!=1) {
-                // If it is branching. i.e a new path has to be generated, Create a copy of TIM MaxInfluential Node
-//                if(leafNodePathID!=parentNodePathID) {
-//                    maxTargetInfluentialNodeWithTIM
-//                }
+                Set<IMTreeNode> children = sharedParents.get(parentNodeID);
                 seedSetInPath.remove(treeNode.getNode());
-                maxTargetInfluentialNodeWithTIM = this.TIMMaxInfluentialNodeMap.get(seedSetInPath);
+                //If there is more than one child, it is branching. Use a copy of the structure to account for the branching.
+                if(children.size()>1) {
+                    maxTargetInfluentialNodeWithTIM = this.TIMMaxInfluentialNodeMap.get(seedSetInPath).createCopy();
+                } else {
+                    maxTargetInfluentialNodeWithTIM = this.TIMMaxInfluentialNodeMap.get(seedSetInPath);
+                }
+                Assert.checkNonNull(maxTargetInfluentialNodeWithTIM);
             } else {
+                //This is the first level
                 maxTargetInfluentialNodeWithTIM = createMaxTargetInfluentialNodeWithTIM((SimpleGraph)graph);
-
             }
 
             //Get the max influential node calculator and add this node to the seed. Then index the Hashmap with the new seed set.
             maxTargetInfluentialNodeWithTIM.addToSeed(treeNode.getNode(), this.randomRRSetArray);
             seedSetInPath.add(treeNode.getNode());
             this.TIMMaxInfluentialNodeMap.put(seedSetInPath, maxTargetInfluentialNodeWithTIM);
+            keysToNotRemove.add(seedSetInPath);
+        }
+
+        //For the nodes that branched, remove the old TIM Data so that memory if freed.
+        Set<Set<Integer>> keys = new HashSet<>(this.TIMMaxInfluentialNodeMap.keySet());
+        for (Set<Integer> key: keys){
+            if (keysToNotRemove.contains(key)) continue;
+            this.TIMMaxInfluentialNodeMap.remove(key);
         }
     }
 

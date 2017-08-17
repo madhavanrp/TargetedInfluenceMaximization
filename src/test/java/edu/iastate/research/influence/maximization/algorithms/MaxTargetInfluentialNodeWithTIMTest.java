@@ -131,7 +131,7 @@ public class MaxTargetInfluentialNodeWithTIMTest {
                 MaxTargetInfluentialNodeWithTIM maxTargetInfluentialNodeWithTIM = maxTargetInfluentialNodeWithTIMList.get(i);
                 Set<Integer> seedSet = allSeedSets.get(i);
                 int maxNode = maxTargetInfluentialNodeWithTIM.findNodeWithMaximumMarginalGain(getRandomCandidateNodes(seedSet, graph)).getNode();
-
+                Assert.assertFalse(seedSet.contains(maxNode));
 
                 Assert.assertNotEquals(Integer.MIN_VALUE, maxNode);
                 seedSet.add(maxNode);

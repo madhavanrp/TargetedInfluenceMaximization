@@ -7,6 +7,7 @@ import edu.iastate.research.graph.utilities.ReadLabelsFromFile;
 import edu.iastate.research.influence.maximization.algorithms.IMTInstanceByStrategy;
 import edu.iastate.research.influence.maximization.algorithms.IMWithTargetLabels;
 import edu.iastate.research.influence.maximization.diffusion.IndependentCascadeModel;
+import edu.iastate.research.influence.maximization.models.AlgorithmParameters;
 import edu.iastate.research.influence.maximization.models.IMTStrategy;
 import edu.iastate.research.influence.maximization.models.IMTreeSeedSet;
 import edu.iastate.research.influence.maximization.utilities.DisplaySeedSets;
@@ -32,19 +33,19 @@ public class Simulator {
         } else {
             Scanner sc = new Scanner(System.in);
             System.out.println("Enter Graph File Name");
-            String filename = "graph_ic.inf";
+            String filename = sc.next();
             System.out.println("Enter the propagation probability");
-            float probability = 0.05f;
+            float probability = sc.nextFloat();
             System.out.println("Enter percentage of A's to be in Graph");
-            int percent = 80;
+            int percent = sc.nextInt();
             System.out.println("Enter budget of seed set");
-            int budget = 20;
+            int budget = sc.nextInt();
             System.out.println("Enter non target threshold");
-            int nonTargetThreshold = 10;
+            int nonTargetThreshold = sc.nextInt();
             System.out.println("Enter the NonTargetsEstimate filename");
-            String nonTargetsEstimateFilename = "a3318909-be83-43c5-bcd4-1e9bd7d57234-non-targets-map.data";
+            String nonTargetsEstimateFilename = "";
             System.out.println("Enter the Influence Maximization Strategy (1-6)");
-            int strategy = 6;
+            int strategy = sc.nextInt();
             setupLogger(filename + "_" + probability + "_" + percent + "_" + budget + "_" + nonTargetThreshold + "_" + "_" + strategy + "_" + System.currentTimeMillis() + ".log");
             wikiGraphDifferentComobination(filename, probability, percent, budget, nonTargetThreshold, nonTargetsEstimateFilename, strategy);
         }
@@ -80,6 +81,10 @@ public class Simulator {
     }
 
     private static void wikiGraphDifferentComobination(String filename, float probability, int percent, int budget, int nonTargetThreshold, String nonTargetsEstimateFilename, int strategy) {
+
+        AlgorithmParameters.getInstance().setBudget(budget);
+        AlgorithmParameters.getInstance().setNonTargetThreshold(nonTargetThreshold);
+        AlgorithmParameters.getInstance().setEpsilon(0.1);
         Vertex.setPropagationProbability(probability);
         String experimentName = filename.split(".txt")[0] + "_" + probability + "_" + percent + "%A_" + budget + "_" + nonTargetThreshold + "_" + nonTargetsEstimateFilename.split(".data")[0].replace('\\', '_') + "_" + strategy;
         FileDataReader wikiVoteDataReader = new FileDataReader(filename, probability);

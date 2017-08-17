@@ -1,5 +1,6 @@
 package edu.iastate.research.influence.maximization.algorithms;
 
+import com.sun.tools.javac.util.Assert;
 import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.influence.maximization.models.IMTreeNode;
 import edu.iastate.research.influence.maximization.models.NodeWithInfluence;
@@ -63,17 +64,9 @@ public abstract class IMWithTargetLabelsWithPruning extends IMWithTargetLabels {
             logger.info("Adding child node " + childNode.getNode() + " with Target influence Spread " + childNode.getActiveTargets() + " non Targets : " + childNode.getActiveNonTargets());
             parent.addChild(childNode);
             firstQueue.add(childNode);
+            Assert.check(childNode.getNode()!=childNode.getParent().getNode());
         }
-
-        //First identify the new branches
-        for (IMTreeNode treeNode: firstQueue) {
-            int leafNodePathID = treeNode.getPathID();
-            int parentNodePathID = treeNode.getParent().getPathID();
-            if(leafNodePathID==parentNodePathID) continue;
-
-            //Create a copy
-            System.out.println(String.format("Leaf path ID : %d, Parent path ID: %d", leafNodePathID, parentNodePathID));
-        }
+        //TODO: Remove this block of code and print statements.
         int count = 0;
         Set<Set<Integer>> allSeeds = new HashSet<>();
         for (IMTreeNode treeNode :
@@ -82,11 +75,14 @@ public abstract class IMWithTargetLabelsWithPruning extends IMWithTargetLabels {
             allSeeds.add(seedSetInPath);
             System.out.println(String.format("At level %d, node: %d, Non Targets along path: %d, Path ID: %d", seedSetInPath.size(), treeNode.getNode(), countNonTargetsActivatedInPath(treeNode), treeNode.getPathID()));
             count++;
+            Assert.check(treeNode.getNode()!=treeNode.getParent().getNode());
         }
-        System.out.println("Count is  " + count);
+
         if(allSeeds.size()!=count) {
             System.out.println("Seed set collision");
+            System.out.println("Count is  " + count);
         }
+
     }
 
 }

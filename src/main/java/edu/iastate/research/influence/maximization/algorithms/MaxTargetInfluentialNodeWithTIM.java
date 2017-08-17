@@ -69,7 +69,10 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
 
     @Override
     public List<NodeWithInfluence> find(Object graphObject, Set<Integer> candidateNodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
-        NodeWithInfluence nodeWithInfluence = findNodeWithMaximumMarginalGain(candidateNodes);
+        Set<Integer> candidateNodesWithoutSeedSet = new HashSet<>(candidateNodes);
+        candidateNodesWithoutSeedSet.removeAll(seedSet);
+        NodeWithInfluence nodeWithInfluence = findNodeWithMaximumMarginalGain(candidateNodesWithoutSeedSet);
+        Assert.check(!seedSet.contains(nodeWithInfluence.getNode()));
         Assert.checkNonNull(nodeWithInfluence);
         List<NodeWithInfluence> list = new ArrayList<>();
         list.add(nodeWithInfluence);
@@ -161,7 +164,6 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
 
     public static double calculateRValue(int n, double epsilon, double opt, int k) {
         double R = (8+2 * epsilon) * (Math.log(n) + Math.log(2) + n * logcnk(n,k))/(epsilon * epsilon * opt);
-        R = 100000;
         return R;
     }
 
@@ -304,7 +306,7 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
         maxTargetInfluentialNode.randomRRSetGenerator = new RandomRRSetGenerator(graph);
         maxTargetInfluentialNode.targetLabel = null;
         maxTargetInfluentialNode.graph = graph;
-        int k = 40;
+        int k = 10;
         double epsilon = 0.1;
         double kpt = maxTargetInfluentialNode.estimateKPT(graph.getGraph(), m, k);
         System.out.println("KPT estimate is " + kpt);
@@ -355,7 +357,6 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
         boolean[] nodeMark = this.timRandomRRSetMap.getNodeMark();
         boolean[] edgeMark = this.timRandomRRSetMap.getEdgeMark();
         nodeMark[nodeID] = false;
-
         int numberCovered = this.timRandomRRSetMap.countForVertex(nodeID);
         List<Integer> edgeInfluence = this.timRandomRRSetMap.get(nodeID);
         for (int i = 0; i < numberCovered; i++) {
