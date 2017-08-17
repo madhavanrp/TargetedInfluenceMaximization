@@ -1,6 +1,5 @@
 package edu.iastate.research.influence.maximization.algorithms;
 
-import com.sun.tools.javac.util.Assert;
 import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.graph.models.SimpleGraph;
 import edu.iastate.research.influence.maximization.algorithms.faster.GraphConversionUtilities;
@@ -60,10 +59,7 @@ public class IMTRandomDagEstimatorAndTIMInfluential extends IMWithTargetLabelsWi
         MaxTargetInfluentialNodeWithTIM maxTargetInfluentialNodeWithTIM;
         maxTargetInfluentialNodeWithTIM = this.TIMMaxInfluentialNodeMap.get(seedSet);
         List<NodeWithInfluence> maxInfluentialNodes = maxTargetInfluentialNodeWithTIM.find(graph, candidateNodes, seedSet, targetLabels, noOfSimulations);
-        for (NodeWithInfluence nodeWithInfluence:
-             maxInfluentialNodes) {
-            Assert.check(!seedSet.contains(nodeWithInfluence.getNode()));
-        }
+
         return maxInfluentialNodes;
     }
 
@@ -111,7 +107,6 @@ public class IMTRandomDagEstimatorAndTIMInfluential extends IMWithTargetLabelsWi
                 } else {
                     maxTargetInfluentialNodeWithTIM = this.TIMMaxInfluentialNodeMap.get(seedSetInPath);
                 }
-                Assert.checkNonNull(maxTargetInfluentialNodeWithTIM);
             } else {
                 //This is the first level
                 maxTargetInfluentialNodeWithTIM = createMaxTargetInfluentialNodeWithTIM((SimpleGraph)graph);

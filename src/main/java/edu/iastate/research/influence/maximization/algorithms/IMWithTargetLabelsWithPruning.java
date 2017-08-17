@@ -1,7 +1,5 @@
 package edu.iastate.research.influence.maximization.algorithms;
 
-import com.sun.tools.javac.util.Assert;
-import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.influence.maximization.models.IMTreeNode;
 import edu.iastate.research.influence.maximization.models.NodeWithInfluence;
 
@@ -64,7 +62,6 @@ public abstract class IMWithTargetLabelsWithPruning extends IMWithTargetLabels {
             logger.info("Adding child node " + childNode.getNode() + " with Target influence Spread " + childNode.getActiveTargets() + " non Targets : " + childNode.getActiveNonTargets());
             parent.addChild(childNode);
             firstQueue.add(childNode);
-            Assert.check(childNode.getNode()!=childNode.getParent().getNode());
         }
         //TODO: Remove this block of code and print statements.
         int count = 0;
@@ -75,7 +72,6 @@ public abstract class IMWithTargetLabelsWithPruning extends IMWithTargetLabels {
             allSeeds.add(seedSetInPath);
             System.out.println(String.format("At level %d, node: %d, Non Targets along path: %d, Path ID: %d", seedSetInPath.size(), treeNode.getNode(), countNonTargetsActivatedInPath(treeNode), treeNode.getPathID()));
             count++;
-            Assert.check(treeNode.getNode()!=treeNode.getParent().getNode());
         }
 
         if(allSeeds.size()!=count) {

@@ -1,10 +1,8 @@
 package edu.iastate.research.influence.maximization.algorithms;
 
-import com.sun.tools.javac.util.Assert;
 import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.graph.models.SimpleGraph;
 import edu.iastate.research.graph.utilities.FileDataReader;
-import edu.iastate.research.graph.utilities.ReadLabelsFromFile;
 import edu.iastate.research.influence.maximization.diffusion.IndependentCascadeModel;
 import edu.iastate.research.influence.maximization.models.NodeWithInfluence;
 
@@ -72,8 +70,6 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
         Set<Integer> candidateNodesWithoutSeedSet = new HashSet<>(candidateNodes);
         candidateNodesWithoutSeedSet.removeAll(seedSet);
         NodeWithInfluence nodeWithInfluence = findNodeWithMaximumMarginalGain(candidateNodesWithoutSeedSet);
-        Assert.check(!seedSet.contains(nodeWithInfluence.getNode()));
-        Assert.checkNonNull(nodeWithInfluence);
         List<NodeWithInfluence> list = new ArrayList<>();
         list.add(nodeWithInfluence);
         return list;
@@ -296,7 +292,7 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
     }
 
     public static void main(String[] args) {
-        String graphName = "graph_ic.inf";
+        String graphName = "dblp-tang.txt";
         URL url = MaxTargetInfluentialNodeWithTIM.class.getClassLoader().getResource("data" + File.separator + graphName);
         SimpleGraph graph = SimpleGraph.fromFileWithLabels(url.getPath(), 0.8f);
         MaxTargetInfluentialNodeWithTIM maxTargetInfluentialNode = new MaxTargetInfluentialNodeWithTIM();
