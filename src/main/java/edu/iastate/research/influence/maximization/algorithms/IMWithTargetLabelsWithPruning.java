@@ -63,7 +63,7 @@ public abstract class IMWithTargetLabelsWithPruning extends IMWithTargetLabels {
             parent.addChild(childNode);
             firstQueue.add(childNode);
         }
-       
+
 
     }
 

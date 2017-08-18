@@ -20,10 +20,12 @@ public class EstimateNonTargetsUsingTIM extends EstimateNonTargets{
         int[] nodeCounts = new int[graph.getNumberOfVertices()];
         RandomRRSetGenerator randomRRSetGenerator = new RandomRRSetGenerator(graph);
         int budget = AlgorithmParameters.getInstance().getBudget();
+        int n = graph.getNumberOfVertices();
         double epsilon = AlgorithmParameters.getInstance().getEpsilon();
-        double KPT = MaxTargetInfluentialNodeWithTIM.estimateKPT(randomRRSetGenerator, graph.getNumberOfVertices(), graph.getNumberOfEdges(), budget, false);
-        int R = (int)Math.ceil(MaxTargetInfluentialNodeWithTIM.calculateRValue(graph.getNumberOfVertices(), epsilon, KPT, budget));
-
+//        double KPT = MaxTargetInfluentialNodeWithTIM.estimateKPT(randomRRSetGenerator, graph.getNumberOfVertices(), graph.getNumberOfEdges(), budget, false);
+//        int R = (int)Math.ceil(MaxTargetInfluentialNodeWithTIM.calculateRValue(graph.getNumberOfVertices(), epsilon, KPT, budget));
+        double RDouble = (8+2 * epsilon) * n * (2 * Math.log(n) + Math.log(2))/(epsilon * epsilon);
+        int R = (int)Math.ceil(RDouble);
         logger.info(String.format("For TIM phase 1, value of R is %d", R ));
         for (int i = 0; i < R; i++) {
             Set<Integer> visited = new HashSet<>();

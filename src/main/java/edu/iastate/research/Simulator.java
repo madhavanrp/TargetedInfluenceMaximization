@@ -84,7 +84,7 @@ public class Simulator {
 
         AlgorithmParameters.getInstance().setBudget(budget);
         AlgorithmParameters.getInstance().setNonTargetThreshold(nonTargetThreshold);
-        AlgorithmParameters.getInstance().setEpsilon(1);
+        AlgorithmParameters.getInstance().setEpsilon(2);
         Vertex.setPropagationProbability(probability);
         String experimentName = filename.split(".txt")[0] + "_" + probability + "_" + percent + "%A_" + budget + "_" + nonTargetThreshold + "_" + nonTargetsEstimateFilename.split(".data")[0].replace('\\', '_') + "_" + strategy;
         FileDataReader wikiVoteDataReader = new FileDataReader(filename, probability);

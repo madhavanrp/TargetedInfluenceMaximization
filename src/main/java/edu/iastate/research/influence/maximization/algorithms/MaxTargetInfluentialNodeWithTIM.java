@@ -164,7 +164,8 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
     }
 
     public static double calculateRValue(int n, double epsilon, double opt, int k) {
-        double R = (8+2 * epsilon) * (Math.log(n) + Math.log(2) + n * logcnk(n,k))/(epsilon * epsilon * opt);
+//        double R = (8+2 * epsilon) * (Math.log(n) + Math.log(2) + n * logcnk(n,k))/(epsilon * epsilon * opt);
+        double R = (8+2 * epsilon) * n * (2 * Math.log(n) + Math.log(2))/(epsilon * epsilon);
         return R;
     }
 
