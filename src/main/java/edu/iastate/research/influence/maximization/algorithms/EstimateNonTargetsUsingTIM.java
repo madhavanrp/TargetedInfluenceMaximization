@@ -2,6 +2,7 @@ package edu.iastate.research.influence.maximization.algorithms;
 
 import edu.iastate.research.graph.models.SimpleGraph;
 import edu.iastate.research.graph.utilities.WriteObject;
+import edu.iastate.research.influence.maximization.models.AlgorithmParameters;
 import org.apache.log4j.Logger;
 
 import java.util.*;
@@ -17,9 +18,13 @@ public class EstimateNonTargetsUsingTIM extends EstimateNonTargets{
         int[] inDegree = graph.getInDegree();
         int[] nonTargets = graph.getNonTargetNodes();
         int[] nodeCounts = new int[graph.getNumberOfVertices()];
-        int R = 1000000;
+        RandomRRSetGenerator randomRRSetGenerator = new RandomRRSetGenerator(graph);
+        int budget = AlgorithmParameters.getInstance().getBudget();
+        double epsilon = AlgorithmParameters.getInstance().getEpsilon();
+        double KPT = MaxTargetInfluentialNodeWithTIM.estimateKPT(randomRRSetGenerator, graph.getNumberOfVertices(), graph.getNumberOfEdges(), budget, false);
+        int R = (int)Math.ceil(MaxTargetInfluentialNodeWithTIM.calculateRValue(graph.getNumberOfVertices(), epsilon, KPT, budget));
 
-
+        logger.info(String.format("For TIM phase 1, value of R is %d", R ));
         for (int i = 0; i < R; i++) {
             Set<Integer> visited = new HashSet<>();
             Queue<Integer> queue = new LinkedList<>();

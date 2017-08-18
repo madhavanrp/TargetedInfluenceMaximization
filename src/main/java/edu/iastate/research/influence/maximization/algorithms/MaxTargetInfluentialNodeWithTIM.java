@@ -106,6 +106,9 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
     }
 
     public static double estimateKPT(RandomRRSetGenerator randomRRSetGenerator, int n, int m, int k) {
+        return MaxTargetInfluentialNodeWithTIM.estimateKPT(randomRRSetGenerator, n, m, k, true);
+    }
+    public static double estimateKPT(RandomRRSetGenerator randomRRSetGenerator, int n, int m, int k, boolean label) {
         double y = logBase2(n);
         int l = 1;
         double z = (6 * l * Math.log(n) + 6 * Math.log(logBase2(n)));
@@ -113,7 +116,7 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
             double c = z * Math.pow(2, i);
             double sum = 0;
             for (int j = 1; j <=c ; j++) {
-                int[][] randomRRSet = randomRRSetGenerator.generateRandomRRSetWithLabel();
+                int[][] randomRRSet = randomRRSetGenerator.generateRandomRRSetWithLabel(label);
                 int width = randomRRSet[1][0];
                 //Calculate K(R)
                 double a = 1 - (double)width/(double)m;
