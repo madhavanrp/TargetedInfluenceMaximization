@@ -63,21 +63,7 @@ public abstract class IMWithTargetLabelsWithPruning extends IMWithTargetLabels {
             parent.addChild(childNode);
             firstQueue.add(childNode);
         }
-        //TODO: Remove this block of code and print statements.
-        int count = 0;
-        Set<Set<Integer>> allSeeds = new HashSet<>();
-        for (IMTreeNode treeNode :
-                firstQueue) {
-            Set<Integer> seedSetInPath = findSeedSetInPath(treeNode);
-            allSeeds.add(seedSetInPath);
-            //System.out.println(String.format("At level %d, node: %d, Non Targets along path: %d, Path ID: %d", seedSetInPath.size(), treeNode.getNode(), countNonTargetsActivatedInPath(treeNode), treeNode.getPathID()));
-            count++;
-        }
-
-        if(allSeeds.size()!=count) {
-            System.out.println("Seed set collision");
-            System.out.println("Count is  " + count);
-        }
+       
 
     }
 
