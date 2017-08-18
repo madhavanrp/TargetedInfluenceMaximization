@@ -5,6 +5,7 @@ import edu.iastate.research.graph.models.SimpleGraph;
 import edu.iastate.research.graph.utilities.FileDataReader;
 import edu.iastate.research.influence.maximization.diffusion.IndependentCascadeModel;
 import edu.iastate.research.influence.maximization.models.NodeWithInfluence;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.URL;
@@ -14,6 +15,7 @@ import java.util.*;
  * Created by madhavanrp on 7/26/17.
  */
 public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
+    final static Logger logger = Logger.getLogger(MaxTargetInfluentialNodeWithTIM.class);
 
     RandomRRSetGenerator randomRRSetGenerator;
     String targetLabel = null;
@@ -131,7 +133,7 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
 
     public static int[][] generateRandomRRsetArray(SimpleGraph graph, double R) {
         RandomRRSetGenerator randomRRSetGenerator = new RandomRRSetGenerator(graph);
-        System.out.println("R value is " + R);
+        logger.info("R value is " + R);
         int maxSize = 0;
         int[][] randomRRSetArray = new int[(int)Math.ceil(R)][];
         long startTime, endTime;
@@ -146,13 +148,13 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
             int j = 0;
             if(randomRRSet[0].length>maxSize) maxSize = randomRRSet[0].length;
 
-            if(i%1000000==0 && i>0) {
-                System.out.println("Generated RR Set" + i);
-                System.out.println("Max Size so far is " + maxSize);
-                System.out.println("Average time to initialise random RR set : " + (double)totalTime/(double) 1000000);
-                System.out.println("Total time to initialise random RR set : " + totalTime);
-                totalTime = 0;
-            }
+//            if(i%1000000==0 && i>0) {
+//                System.out.println("Generated RR Set" + i);
+//                System.out.println("Max Size so far is " + maxSize);
+//                System.out.println("Average time to initialise random RR set : " + (double)totalTime/(double) 1000000);
+//                System.out.println("Total time to initialise random RR set : " + totalTime);
+//                totalTime = 0;
+//            }
         }
 
         return randomRRSetArray;
@@ -172,14 +174,14 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
                 int u = randomRRSet[j];
                 timRandomRRSetMap.incrementCountForVertex(u, i);
             }
-            if(i%1000000==0) {
-                System.out.println("Completed processing for RRsets " + i);
-            }
+//            if(i%1000000==0) {
+//                System.out.println("Completed processing for RRsets " + i);
+//            }
         }
         endTime = System.currentTimeMillis();
-        System.out.println("Time taken to increment count for all RR Sets: " + (endTime-startTime));
-        System.out.println("Average Time taken to increment count for all RR Sets: " + (endTime-startTime) * 1.0/R);
-        System.out.println("RR Sets generated size: " + randomRRSetArray.length);
+//        System.out.println("Time taken to increment count for all RR Sets: " + (endTime-startTime));
+//        System.out.println("Average Time taken to increment count for all RR Sets: " + (endTime-startTime) * 1.0/R);
+//        System.out.println("RR Sets generated size: " + randomRRSetArray.length);
     }
 
     private Set<Integer> nodeSelection(SimpleGraph graph, int[] inDegree, double epsilon, double opt, int k) {

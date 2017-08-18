@@ -42,7 +42,6 @@ public class EstimateNonTargetsUsingRandomDAG extends EstimateNonTargets {
         String filename = UUID.randomUUID().toString() + "-non-targets-map.data";
         logger.info("Writing Estimated Non Targets Map to file " + filename);
         WriteObject.writeToFile(estimatedNonTargetMap, filename);
-
         return estimatedNonTargetMap;
     }
 

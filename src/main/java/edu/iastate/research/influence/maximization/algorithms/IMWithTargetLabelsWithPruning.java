@@ -19,11 +19,11 @@ public abstract class IMWithTargetLabelsWithPruning extends IMWithTargetLabels {
     void processTreeLevel(Object graph, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, Queue<IMTreeNode> firstQueue, Queue<IMTreeNode> secondQueue, Map<Integer, Set<Integer>> nonTargetsEstimateMap, int noOfSimulations) {
         IMTreeNode current;
         int countDiffusions = 0;
-        logger.info("Number of nodes at level : " + secondQueue.size());
+//        logger.info("Number of nodes at level : " + secondQueue.size());
         Map<Integer, IMTreeNode> maxTreeChildNodeByNotTargetCount = new HashMap<>();
         while (!secondQueue.isEmpty()) {
             current = secondQueue.remove();
-            logger.debug("Processing TreeNode " + current.getNode());
+//            logger.debug("Processing TreeNode " + current.getNode());
 
             //For the current node, get the seed set and Targets, Non Targets
             Set<Integer> seedSetInPath = findSeedSetInPath(current);
@@ -56,10 +56,10 @@ public abstract class IMWithTargetLabelsWithPruning extends IMWithTargetLabels {
                 }
             }
         }
-        logger.info("Number of diffusions in this level: " + countDiffusions);
+//        logger.info("Number of diffusions in this level: " + countDiffusions);
         for (IMTreeNode childNode : maxTreeChildNodeByNotTargetCount.values()) {
             IMTreeNode parent = childNode.getParent();
-            logger.info("Adding child node " + childNode.getNode() + " with Target influence Spread " + childNode.getActiveTargets() + " non Targets : " + childNode.getActiveNonTargets());
+//            logger.info("Adding child node " + childNode.getNode() + " with Target influence Spread " + childNode.getActiveTargets() + " non Targets : " + childNode.getActiveNonTargets());
             parent.addChild(childNode);
             firstQueue.add(childNode);
         }
@@ -70,7 +70,7 @@ public abstract class IMWithTargetLabelsWithPruning extends IMWithTargetLabels {
                 firstQueue) {
             Set<Integer> seedSetInPath = findSeedSetInPath(treeNode);
             allSeeds.add(seedSetInPath);
-            System.out.println(String.format("At level %d, node: %d, Non Targets along path: %d, Path ID: %d", seedSetInPath.size(), treeNode.getNode(), countNonTargetsActivatedInPath(treeNode), treeNode.getPathID()));
+            //System.out.println(String.format("At level %d, node: %d, Non Targets along path: %d, Path ID: %d", seedSetInPath.size(), treeNode.getNode(), countNonTargetsActivatedInPath(treeNode), treeNode.getPathID()));
             count++;
         }
 

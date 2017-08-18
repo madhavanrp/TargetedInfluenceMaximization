@@ -280,5 +280,18 @@ public class SimpleGraph {
 
     }
 
+    public int[] getNonTargetNodes() {
+        Set<Integer> nonTargets = new HashSet<>();
+        for (int i = 0; i < this.n; i++) {
+            if(!this.labels[i]) nonTargets.add(i);
+        }
+        int[] nonTargetsArray = new int[nonTargets.size()];
+        int i = 0;
+        for(int nonTarget: nonTargets) {
+            nonTargetsArray[i++] = nonTarget;
+        }
+        return nonTargetsArray;
+    }
+
 
 }

@@ -48,6 +48,10 @@ public class IMTInstanceByStrategy {
                 instance = new IMTRandomDagEstimatorAndTIMInfluential();
                 logger.debug("Instantiating IMTStrategy : RANDOM_DAG_ESTIMATOR_AND_TIM_INFLUENTIAL");
                 break;
+            case TIM_ESTIMATOR_AND_TIM_INFLUENTIAL:
+                instance = new IMTTIMEstimatorAndTIMInfluential();
+                logger.debug("Instantiating IMTStrategy : TIM_ESTIMATOR_AND_TIM_INFLUENTIAL");
+                break;
         }
         return instance;
     }

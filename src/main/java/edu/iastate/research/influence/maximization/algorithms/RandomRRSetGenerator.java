@@ -22,13 +22,25 @@ public class RandomRRSetGenerator {
     }
 
     public int[][] generateRandomRRSetWithLabel() {
-        int width = 0;
+        return generateRandomRRSetWithLabel(true);
+    }
 
+    public int[][] generateRandomRRSetWithLabel(boolean label) {
         int random = ThreadLocalRandom.current().nextInt(0, this.n);
-        while(!this.graph.getLabel(random)) {
+        while(this.graph.getLabel(random)!=label) {
             random = ThreadLocalRandom.current().nextInt(0, this.n);
         }
+        return generateRandomRRSetStartingFrom(random);
+    }
 
+    public int[][] generateRandomRRSetFromSubset(int[] nodes) {
+        int randomNodeIndex = ThreadLocalRandom.current().nextInt(0, nodes.length);
+        int randomNode = nodes[randomNodeIndex];
+        return generateRandomRRSetStartingFrom(randomNode);
+    }
+
+    private int[][] generateRandomRRSetStartingFrom(int random) {
+        int width = 0;
         Set<Integer> visited = new HashSet<>();
         Queue<Integer> queue = new LinkedList<>();
         queue.add(random);

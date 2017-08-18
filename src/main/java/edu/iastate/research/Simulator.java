@@ -45,7 +45,7 @@ public class Simulator {
             System.out.println("Enter the NonTargetsEstimate filename");
             String nonTargetsEstimateFilename = "";
             System.out.println("Enter the Influence Maximization Strategy (1-6)");
-            int strategy = 9;
+            int strategy = 10;
             setupLogger(filename + "_" + probability + "_" + percent + "_" + budget + "_" + nonTargetThreshold + "_" + "_" + strategy + "_" + System.currentTimeMillis() + ".log");
             wikiGraphDifferentComobination(filename, probability, percent, budget, nonTargetThreshold, nonTargetsEstimateFilename, strategy);
         }
@@ -84,7 +84,7 @@ public class Simulator {
 
         AlgorithmParameters.getInstance().setBudget(budget);
         AlgorithmParameters.getInstance().setNonTargetThreshold(nonTargetThreshold);
-        AlgorithmParameters.getInstance().setEpsilon(0.1);
+        AlgorithmParameters.getInstance().setEpsilon(1);
         Vertex.setPropagationProbability(probability);
         String experimentName = filename.split(".txt")[0] + "_" + probability + "_" + percent + "%A_" + budget + "_" + nonTargetThreshold + "_" + nonTargetsEstimateFilename.split(".data")[0].replace('\\', '_') + "_" + strategy;
         FileDataReader wikiVoteDataReader = new FileDataReader(filename, probability);

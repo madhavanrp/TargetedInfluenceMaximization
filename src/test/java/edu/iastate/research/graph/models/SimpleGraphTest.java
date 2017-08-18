@@ -52,4 +52,16 @@ public class SimpleGraphTest {
             }
         }
     }
+
+    @Test
+    public void testNonTargetsArray() {
+        SimpleGraph graph = getGraph();
+        int[] nonTargets = graph.getNonTargetNodes();
+        boolean containsNode = false;
+        for (int nonTarget :
+                nonTargets) {
+            if(nonTarget==8608) containsNode = true;
+        }
+        Assert.assertTrue(containsNode);
+    }
 }
