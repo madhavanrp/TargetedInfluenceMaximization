@@ -52,6 +52,10 @@ public class IMTInstanceByStrategy {
                 instance = new IMTTIMEstimatorAndTIMInfluential();
                 logger.debug("Instantiating IMTStrategy : TIM_ESTIMATOR_AND_TIM_INFLUENTIAL");
                 break;
+            case TIM_ESTIMATOR_AND_DD_INFLUENTIAL:
+                instance = new IMTTIMEstimatorAndDDInfluential();
+                logger.debug("Instantiating IMTStrategy : TIM_ESTIMATOR_AND_DD_INFLUENTIAL");
+                break;
         }
         return instance;
     }

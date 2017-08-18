@@ -45,7 +45,7 @@ public class Simulator {
             System.out.println("Enter the NonTargetsEstimate filename");
             String nonTargetsEstimateFilename = "";
             System.out.println("Enter the Influence Maximization Strategy (1-6)");
-            int strategy = 10;
+            int strategy = 11;
             setupLogger(filename + "_" + probability + "_" + percent + "_" + budget + "_" + nonTargetThreshold + "_" + "_" + strategy + "_" + System.currentTimeMillis() + ".log");
             wikiGraphDifferentComobination(filename, probability, percent, budget, nonTargetThreshold, nonTargetsEstimateFilename, strategy);
         }
