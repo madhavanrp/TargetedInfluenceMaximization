@@ -6,6 +6,7 @@ import edu.iastate.research.influence.maximization.models.IMTree;
 import edu.iastate.research.influence.maximization.models.IMTreeNode;
 import edu.iastate.research.influence.maximization.models.IMTreeSeedSet;
 import edu.iastate.research.influence.maximization.utilities.SeedSetFromIMTree;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -15,10 +16,16 @@ import static edu.iastate.research.influence.maximization.utilities.SeedSetFromI
  * Created by madhavanrp on 6/7/17.
  */
 public class IMTreeSeedSelector {
+    final static Logger logger = Logger.getLogger(IMTreeSeedSelector.class);
     public static List<IMTreeSeedSet> findSeedSets(DirectedGraph graph, IMTree tree, int budget, int threshold, Set<String> targetLabels, Set<String> nonTargetLabels, int noOfSimulations) {
 
         SeedSetFromIMTree seedSetFromIMTree = new SeedSetFromIMTree();
         Queue<IMTreeNode> leafNodes = seedSetFromIMTree.getTreeNodesAtDepth(tree.getRoot(), budget);
+        Set<Integer> estimatedSeedSet = seedSetFromIMTree.findSeedSetFromPath(tree, budget);
+        IMTreeNode maxLeaf = seedSetFromIMTree.getMaxLeaf(tree, budget);
+        logger.info("Estimated maximum seed set is " + estimatedSeedSet);
+        logger.info(String.format("Estimated maximum targets: %d", (int)SeedSetFromIMTree.countActiveTargetsInPath(maxLeaf)));
+        logger.info(String.format("Estimated maximum Non Targets: %d", IMWithTargetLabels.countNonTargetsActivatedInPath(maxLeaf)));
 
         List<IMTreeSeedSet> seedSets = new ArrayList<>();
         for(IMTreeNode leaf:leafNodes) {

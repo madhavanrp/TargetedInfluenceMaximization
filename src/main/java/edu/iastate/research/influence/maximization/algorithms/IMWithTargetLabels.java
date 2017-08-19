@@ -79,6 +79,16 @@ public abstract class IMWithTargetLabels {
         long phase1EndTime = System.nanoTime();
         long phase1Time = phase1EndTime-phase1StartTime;
         logger.info(String.format("Time taken for phase 1 is : " + TimeUnit.MILLISECONDS.convert(phase1Time, TimeUnit.NANOSECONDS)));
+        int numberOfNodesToSearch = 0;
+        for (int i = 0; i <= nonTargetThreshold; i++) {
+            Set<Integer> vertices = nonTargetsEstimateMap.get(i);
+            int numberInfluenced = 0;
+            if(vertices!=null) numberInfluenced = vertices.size();
+            logger.info(String.format("Number of nodes influencing %d Non Targets is %d", i, numberInfluenced));
+            numberOfNodesToSearch+= numberInfluenced;
+        }
+        logger.info(String.format("Total number of nodes obtained from phase 1: %d", numberOfNodesToSearch));
+        logger.info(String.format("Number of nodes pruned in phase 1: %d", graph.getNumberOfVertices() - numberOfNodesToSearch));
         long phase2StartTime = System.nanoTime();
         init(graph, targetLabels, noOfSimulations);
 

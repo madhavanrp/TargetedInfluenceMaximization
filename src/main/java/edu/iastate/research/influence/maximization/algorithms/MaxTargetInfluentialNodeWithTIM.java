@@ -351,7 +351,8 @@ public class MaxTargetInfluentialNodeWithTIM extends MaxTargetInfluentialNode {
 
         }
         this.timRandomRRSetMap.setQueue(queueCopy);
-        NodeWithInfluence nodeWithInfluence = new NodeWithInfluence(maximumGainNode, influence);
+        double scaledInfluence = (double) influence * nodeMark.length/this.getR();
+        NodeWithInfluence nodeWithInfluence = new NodeWithInfluence(maximumGainNode, scaledInfluence);
         return nodeWithInfluence;
     }
     public void addToSeed(int nodeID, int[][] randomRRSetArray) {

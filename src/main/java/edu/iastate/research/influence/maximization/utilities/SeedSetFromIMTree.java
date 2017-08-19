@@ -92,8 +92,15 @@ public class SeedSetFromIMTree {
         maxSum = Integer.MIN_VALUE;
         maxLeaf = null;
         maxSum(maxInfluenceTree.getRoot(), 0, budget, 0);
-        logger.info("Total target Nodes Activated :" + maxSum);
+        logger.info("Total target Nodes Activated :" + (int)maxSum);
         return findSeedSetInPath(maxLeaf);
+    }
+
+    public IMTreeNode getMaxLeaf(IMTree maxInfluenceTree, int budget) {
+        maxSum = Integer.MIN_VALUE;
+        maxLeaf = null;
+        maxSum(maxInfluenceTree.getRoot(), 0, budget, 0);
+        return maxLeaf;
     }
 
 
