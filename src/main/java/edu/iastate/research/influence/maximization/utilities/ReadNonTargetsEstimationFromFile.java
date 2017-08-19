@@ -31,12 +31,12 @@ public class ReadNonTargetsEstimationFromFile {
                 mapByNonTargetsCount.put(nonTargetCount, nodesWithNonTargetCount);
             }
             for (Integer nonTargetCount : mapByNonTargetsCount.keySet()) {
-                logger.info("Vertices with non targets Estimate " + nonTargetCount + " is " + mapByNonTargetsCount.get(nonTargetCount).size());
+//                logger.info("Vertices with non targets Estimate " + nonTargetCount + " is " + mapByNonTargetsCount.get(nonTargetCount).size());
                 StringBuilder sb = new StringBuilder();
                 for (Integer v : mapByNonTargetsCount.get(nonTargetCount)) {
                     sb.append(v + " , ");
                 }
-                logger.debug("Vertices with Non Target Count " + nonTargetCount + " :" + sb.toString());
+//                logger.debug("Vertices with Non Target Count " + nonTargetCount + " :" + sb.toString());
             }
             return mapByNonTargetsCount;
 
