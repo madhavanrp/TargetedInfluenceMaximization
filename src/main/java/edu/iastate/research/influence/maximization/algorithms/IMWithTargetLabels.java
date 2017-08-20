@@ -99,6 +99,7 @@ public abstract class IMWithTargetLabels {
 
             if (!firstQueue.isEmpty()) {
                 depth++;
+                logger.info(String.format("Increasing depth to : %d", depth));
             }
             processTreeLevel(phase2Graph, nonTargetThreshold, targetLabels, nonTargetLabels, secondQueue, firstQueue, nonTargetsEstimateMap, noOfSimulations);
             if (depth >= budget) {
@@ -106,6 +107,7 @@ public abstract class IMWithTargetLabels {
             }
             if (!secondQueue.isEmpty()) {
                 depth++;
+                logger.info(String.format("Increasing depth to : %d", depth));
             }
             processTreeLevel(phase2Graph, nonTargetThreshold, targetLabels, nonTargetLabels, firstQueue, secondQueue, nonTargetsEstimateMap, noOfSimulations);
         }

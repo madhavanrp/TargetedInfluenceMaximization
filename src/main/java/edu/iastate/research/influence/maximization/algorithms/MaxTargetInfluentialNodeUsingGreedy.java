@@ -30,7 +30,7 @@ public class MaxTargetInfluentialNodeUsingGreedy extends MaxTargetInfluentialNod
                 seedSet.add(node);
                 Set<Integer> currentlyActivatedNodes = performDiffusion(graph, seedSet, noOfSimulations, alreadyActivatedNodes);
                 int marginalInfluenceSpread = countTargets(currentlyActivatedNodes, graph, targetLabels) - alreadyInfluencedSpread;
-                logger.debug("Performed Diffusion for node " + node + " and influence is : " + marginalInfluenceSpread);
+//                logger.debug("Performed Diffusion for node " + node + " and influence is : " + marginalInfluenceSpread);
                 if (marginalInfluenceSpread > maxMarginalInfluenceSpread) {
                     maxMarginalInfluenceSpread = marginalInfluenceSpread;
                     maxInfluentialNode = node;

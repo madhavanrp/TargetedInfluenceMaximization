@@ -33,7 +33,7 @@ public class Simulator {
         } else {
             Scanner sc = new Scanner(System.in);
             System.out.println("Enter Graph File Name");
-            String filename = "graph_ic.inf";
+            String filename = "wiki-Vote.txt";
             System.out.println("Enter the propagation probability");
             float probability = 0.05f;
             System.out.println("Enter percentage of A's to be in Graph");
@@ -45,7 +45,7 @@ public class Simulator {
             System.out.println("Enter the NonTargetsEstimate filename");
             String nonTargetsEstimateFilename = "";
             System.out.println("Enter the Influence Maximization Strategy (1-6)");
-            int strategy = 10;
+            int strategy = 1;
             setupLogger(filename + "_" + probability + "_" + percent + "_" + budget + "_" + nonTargetThreshold + "_" + "_" + strategy + "_" + System.currentTimeMillis() + ".log");
             wikiGraphDifferentComobination(filename, probability, percent, budget, nonTargetThreshold, nonTargetsEstimateFilename, strategy);
         }
