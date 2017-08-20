@@ -23,7 +23,7 @@ public class EstimateNonTargetsUsingGreedy extends EstimateNonTargets {
             seedSet.add(vertex.getId());
             Set<Integer> currentActivatedSet = IndependentCascadeModel.performDiffusion(graph, seedSet, noOfSimulations, new HashSet<>());
             int nonTargetsCount = countNonTargets(currentActivatedSet,graph,nonTargetLabels);
-            logger.debug("Estimated Activated Non Targets for Vertex " + vertex.getId() + " : " + nonTargetsCount);
+//            logger.debug("Estimated Activated Non Targets for Vertex " + vertex.getId() + " : " + nonTargetsCount);
             nonTargetsEstimateMap.put(vertex.getId(), nonTargetsCount);
             seedSet.remove(vertex.getId());
         }

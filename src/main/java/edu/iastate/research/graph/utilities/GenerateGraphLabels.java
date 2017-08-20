@@ -43,7 +43,7 @@ public class GenerateGraphLabels {
 
     public static void main(String[] args) {
         GenerateGraphLabels generateGraphLabels = new GenerateGraphLabels();
-        generateGraphLabels.generateLabels("wiki-Vote.txt",0.8f);
+        generateGraphLabels.generateLabels("facebook_combined.txt",0.8f);
 //        generateGraphLabels.generateLabels("dblp-tang.txt",0.2f);
     }
 
