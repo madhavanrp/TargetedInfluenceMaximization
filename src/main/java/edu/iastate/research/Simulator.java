@@ -4,6 +4,7 @@ import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.graph.models.Vertex;
 import edu.iastate.research.graph.utilities.FileDataReader;
 import edu.iastate.research.graph.utilities.ReadLabelsFromFile;
+import edu.iastate.research.influence.maximization.algorithms.EstimateNonTargetsUsingGreedy;
 import edu.iastate.research.influence.maximization.algorithms.IMTInstanceByStrategy;
 import edu.iastate.research.influence.maximization.algorithms.IMWithTargetLabels;
 import edu.iastate.research.influence.maximization.diffusion.IndependentCascadeModel;
@@ -33,7 +34,7 @@ public class Simulator {
         } else {
             Scanner sc = new Scanner(System.in);
             System.out.println("Enter Graph File Name");
-            String filename = "wiki-Vote.txt";
+            String filename = "ca-GrQc-processed.txt";
             System.out.println("Enter the propagation probability");
             float probability = 0.05f;
             System.out.println("Enter percentage of A's to be in Graph");
@@ -45,7 +46,7 @@ public class Simulator {
             System.out.println("Enter the NonTargetsEstimate filename");
             String nonTargetsEstimateFilename = "";
             System.out.println("Enter the Influence Maximization Strategy (1-6)");
-            int strategy = 1;
+            int strategy = 4;
             setupLogger(filename + "_" + probability + "_" + percent + "_" + budget + "_" + nonTargetThreshold + "_" + "_" + strategy + "_" + System.currentTimeMillis() + ".log");
             wikiGraphDifferentComobination(filename, probability, percent, budget, nonTargetThreshold, nonTargetsEstimateFilename, strategy);
         }

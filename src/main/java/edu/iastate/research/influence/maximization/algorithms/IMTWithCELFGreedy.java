@@ -15,7 +15,8 @@ import static edu.iastate.research.influence.maximization.diffusion.IndependentC
 public class IMTWithCELFGreedy extends IMWithTargetLabels {
     @Override
     public Map<Integer, Integer> estimateNonTargetsByNode(Object graph, Set<String> nonTargetLabels, int noOfSimulations) {
-        return null;
+        EstimateNonTargetsUsingGreedy esimtateNonTargetsUsingGreedy = new EstimateNonTargetsUsingGreedy();
+        return esimtateNonTargetsUsingGreedy.estimate(graph, nonTargetLabels, noOfSimulations);
     }
 
     @Override
