@@ -41,7 +41,7 @@ public class Simulator {
             System.out.println("Enter percentage of A's to be in Graph");
             int percent = 80;
             System.out.println("Enter budget of seed set");
-            int budget = 20;
+            int budget = 40;
             System.out.println("Enter non target threshold");
             int nonTargetThreshold = 10;
             System.out.println("Enter the NonTargetsEstimate filename");
