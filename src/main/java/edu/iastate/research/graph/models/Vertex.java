@@ -111,8 +111,8 @@ public class Vertex implements Serializable {
 
     public float getPropagationProbability(Vertex neighbour) {
 
-        return getPropagationProbability();
-//        return (float)1/Float.valueOf(neighbour.getIndDegree());
+//        return getPropagationProbability();
+        return (float)1/Float.valueOf(neighbour.getIndDegree());
     }
 
     public int getDegree() {

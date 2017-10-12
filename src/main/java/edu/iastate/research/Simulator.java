@@ -7,6 +7,7 @@ import edu.iastate.research.graph.utilities.ReadLabelsFromFile;
 import edu.iastate.research.influence.maximization.algorithms.EstimateNonTargetsUsingGreedy;
 import edu.iastate.research.influence.maximization.algorithms.IMTInstanceByStrategy;
 import edu.iastate.research.influence.maximization.algorithms.IMWithTargetLabels;
+import edu.iastate.research.influence.maximization.algorithms.NaiveGreedy;
 import edu.iastate.research.influence.maximization.diffusion.IndependentCascadeModel;
 import edu.iastate.research.influence.maximization.models.AlgorithmParameters;
 import edu.iastate.research.influence.maximization.models.IMTStrategy;
@@ -46,7 +47,7 @@ public class Simulator {
             System.out.println("Enter the NonTargetsEstimate filename");
             String nonTargetsEstimateFilename = "";
             System.out.println("Enter the Influence Maximization Strategy (1-6)");
-            int strategy = 4;
+            int strategy = 0;
             setupLogger(filename + "_" + probability + "_" + percent + "_" + budget + "_" + nonTargetThreshold + "_" + "_" + strategy + "_" + System.currentTimeMillis() + ".log");
             wikiGraphDifferentComobination(filename, probability, percent, budget, nonTargetThreshold, nonTargetsEstimateFilename, strategy);
         }
@@ -99,9 +100,16 @@ public class Simulator {
         logger.info("***************** Simulating with" + percent + "% A graph ****************");
         printGraphStats(graph, targetLabels, nonTargetLabels);
 
-        IMWithTargetLabels im = IMTInstanceByStrategy.getInstance(IMTStrategy.byValue(strategy));
-        List<IMTreeSeedSet> candidateSeedSets = im.findCandidateSeedSets(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 20000, nonTargetsEstimateFilename, experimentName);
-        DisplaySeedSets.printOutput(candidateSeedSets);
+        if(strategy>0) {
+            IMWithTargetLabels im = IMTInstanceByStrategy.getInstance(IMTStrategy.byValue(strategy));
+            List<IMTreeSeedSet> candidateSeedSets = im.findCandidateSeedSets(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 20000, nonTargetsEstimateFilename, experimentName);
+            DisplaySeedSets.printOutput(candidateSeedSets);
+        }
+        else {
+            NaiveGreedy naiveGreedy = new NaiveGreedy();
+            Set<Integer> seedSet = naiveGreedy.findSeedSet(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 20000);
+            printTargetsActivatedForSeedSet(graph, seedSet, targetLabels);
+        }
 
 
 

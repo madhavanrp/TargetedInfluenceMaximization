@@ -25,6 +25,7 @@ public class CELFNodeWithNonTarget extends CELFNode implements Serializable{
     }
 
     private int estimatedActivateNontargets =0;
+    private int totalNonTargets;
 
     public CELFNodeWithNonTarget(int node, double marginalGain, int flag) {
         super(node, marginalGain, flag);
@@ -34,4 +35,13 @@ public class CELFNodeWithNonTarget extends CELFNode implements Serializable{
         super(node, marginalGain,flag);
         this.estimatedActivateNontargets = estimatedActivateNontargets;
     }
+
+    public int getTotalNonTargets() {
+        return totalNonTargets;
+    }
+
+    public void setTotalNonTargets(int totalNonTargets) {
+        this.totalNonTargets = totalNonTargets;
+    }
+
 }

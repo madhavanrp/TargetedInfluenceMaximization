@@ -27,7 +27,6 @@ public class NaiveGreedy {
 
     public Set<Integer> findSeedSet(DirectedGraph graph, int budget, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, int noOfSimulations) {
         Set<Integer> seedSet = new LinkedHashSet<>();
-        int totalNoTargetsCount = 0;
         PriorityQueue<CELFNodeWithNonTarget> queue = new PriorityQueue<>(new CELFNodeWithNonTargetComparator());
         for (Vertex v : graph.getVertices()) {
             seedSet.add(v.getId());
@@ -35,38 +34,42 @@ public class NaiveGreedy {
             int activeTargetCount = countTargets(activatedSet, graph, targetLabels);
             int activeNonTargetsCount = countTargets(activatedSet, graph, nonTargetLabels);
             if (activeNonTargetsCount < nonTargetThreshold) {
-                queue.add(new CELFNodeWithNonTarget(v.getId(), activeTargetCount, 0, activeNonTargetsCount));
+                CELFNodeWithNonTarget celfNodeWithNonTarget = new CELFNodeWithNonTarget(v.getId(), activeTargetCount, 0, activeNonTargetsCount);
+                celfNodeWithNonTarget.setTotalNonTargets(activeNonTargetsCount);
+                queue.add(celfNodeWithNonTarget);
             }
             seedSet.remove(v.getId());
         }
-        while (seedSet.size() < budget) {
+        while (seedSet.size() < budget && !queue.isEmpty()) {
             CELFNodeWithNonTarget top = queue.peek();
-            if (top.getEstimatedActivateNontargets() + totalNoTargetsCount > nonTargetThreshold) {
+            if (top.getTotalNonTargets() > nonTargetThreshold) {
                 queue.remove();
             } else {
                 if (top.getFlag() == seedSet.size()) {
                     logger.info("Added node " + top.getNode() + " to seed set with activated target nodes: "
                             + top.getMarginalGain() + ", non-targets :" + top.getEstimatedActivateNontargets());
                     seedSet.add(top.getNode());
-                    totalNoTargetsCount += top.getEstimatedActivateNontargets();
                     queue.remove();
                     prevActivatedSet = performDiffusion(graph, seedSet, noOfSimulations, new HashSet<>());
                     logger.info("Total Targets activated " + countTargets(prevActivatedSet,graph, targetLabels));
-                    logger.info("Total Non-targets activated " + totalNoTargetsCount);
+                    logger.info("Total Non-targets activated " + top.getTotalNonTargets());
                     logger.info("Queue Size" + queue.size());
                 } else {
                     seedSet.add(top.getNode());
                     Set<Integer> activatedSet = performDiffusion(graph, seedSet, noOfSimulations, new HashSet<>());
+                    int nonTargetsHit = countTargets(activatedSet, graph, nonTargetLabels);
                     int marginalGainTargetNodes = countTargets(activatedSet, graph, targetLabels) - countTargets(prevActivatedSet, graph, targetLabels);
-                    int marginalGainNonTargetNodes = Math.max(0, countTargets(activatedSet, graph, nonTargetLabels) - countTargets(prevActivatedSet, graph, nonTargetLabels));
+                    int marginalGainNonTargetNodes = Math.max(0, nonTargetsHit - countTargets(prevActivatedSet, graph, nonTargetLabels));
                     logger.info("Updating Queue for node : " + top.getNode() +
                             " with gain, target : " + marginalGainTargetNodes + " non-targets : " + marginalGainNonTargetNodes);
                     seedSet.remove(top.getNode());
                     queue.remove(top);
                     top.setFlag(seedSet.size());
                     top.setMarginalGain(marginalGainTargetNodes);
-                    //  top.setEstimatedActivateNontargets(marginalGainNonTargetNodes);
-                    queue.add(top);
+                    top.setTotalNonTargets(nonTargetsHit);
+                    if(top.getTotalNonTargets()<=nonTargetThreshold) {
+                        queue.add(top);
+                    }
                 }
             }
         }

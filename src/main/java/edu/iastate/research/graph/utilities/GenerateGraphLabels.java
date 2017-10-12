@@ -42,8 +42,10 @@ public class GenerateGraphLabels {
     }
 
     public static void main(String[] args) {
+        String graphFileName = "com-youtube.txt";
         GenerateGraphLabels generateGraphLabels = new GenerateGraphLabels();
-        generateGraphLabels.generateLabels("epinions.txt",0.95f);
+        generateGraphLabels.generateLabels(graphFileName,0.95f);
+        generateGraphLabels.generateLabels(graphFileName,0.90f);
 //        generateGraphLabels.generateLabels("dblp-tang.txt",0.2f);
     }
 
